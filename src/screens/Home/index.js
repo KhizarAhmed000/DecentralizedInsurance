@@ -5,6 +5,34 @@ import images from "../../services/utilities/images";
 export default function Home() {
   // const [activeScreen, setactiveScreen] = useState("Home");
 
+
+
+  const data = [
+    {
+      protocolName: 'BabyDogeSwap',
+      coverType: 'Smart Contract Vulnerability',
+      imgUrl: 'https://via.placeholder.com/48x48',
+      capacity: '~ 166.0k USD',
+      coverWording: 'Learn More',
+    },
+    {
+      protocolName: 'BabyDogeSwap',
+      coverType: 'Smart Contract Vulnerability',
+      imgUrl: 'https://via.placeholder.com/48x48',
+      capacity: '~ 166.0k USD',
+      coverWording: 'Learn More',
+    },
+    {
+      protocolName: 'BabyDogeSwap',
+      coverType: 'Smart Contract Vulnerability',
+      imgUrl: 'https://via.placeholder.com/48x48',
+      capacity: '~ 166.0k USD',
+      coverWording: 'Learn More',
+    },
+
+    // Add more objects as needed
+  ];
+
   return (
     <>
       <div className="w-full h-[1475px] shadow flex-col justify-start items-center gap-[150px] inline-flex bg-[#242324]" >
@@ -73,7 +101,7 @@ export default function Home() {
                 New Products
               </div>
               <div className="self-stretch justify-start items-start gap-5 inline-flex">
-                <div className="grow shrink basis-0 h-[269px] p-[35px] bg-zinc-800 bg-opacity-30 rounded-[15px] border-2 border-purple-600 backdrop-blur-[25px] flex-col justify-center items-center gap-[30px] inline-flex">
+                {/* <div className="grow shrink basis-0 h-[269px] p-[35px] bg-zinc-800 bg-opacity-30 rounded-[15px] border-2 border-purple-600 backdrop-blur-[25px] flex-col justify-center items-center gap-[30px] inline-flex">
                   <div className="self-stretch grow shrink basis-0 flex-col justify-between items-center flex">
                     <div className="self-stretch h-[49px] justify-start items-start gap-2.5 inline-flex">
                       <img
@@ -123,8 +151,8 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="bg-cover bg-center grow shrink basis-0 h-[269px] p-[35px] bg-zinc-800 bg-opacity-30 rounded-[15px] border-2 border-purple-600 backdrop-blur-[25px] flex-col justify-center items-center gap-[30px] inline-flex" style={{backgroundImage: images.leaderboard1}}>
+                </div> */}
+                {/* <div className="bg-cover bg-center grow shrink basis-0 h-[269px] p-[35px] bg-zinc-800 bg-opacity-30 rounded-[15px] border-2 border-purple-600 backdrop-blur-[25px] flex-col justify-center items-center gap-[30px] inline-flex" style={{backgroundImage: images.leaderboard1}}>
                   <div className="self-stretch grow shrink basis-0 flex-col justify-between items-center flex">
                     <div className="self-stretch h-[49px] justify-start items-start gap-2.5 inline-flex">
                       <img
@@ -177,8 +205,8 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="grow shrink basis-0 h-[269px] p-[35px] bg-zinc-800 bg-opacity-30 rounded-[15px] border-2 border-purple-600 backdrop-blur-[25px] flex-col justify-center items-center gap-[30px] inline-flex">
+                </div> */}
+                {/* <div className="grow shrink basis-0 h-[269px] p-[35px] bg-zinc-800 bg-opacity-30 rounded-[15px] border-2 border-purple-600 backdrop-blur-[25px] flex-col justify-center items-center gap-[30px] inline-flex">
                   <div className="self-stretch grow shrink basis-0 flex-col justify-between items-center flex">
                     <div className="self-stretch h-[49px] justify-start items-start gap-2.5 inline-flex">
                       <img
@@ -227,6 +255,53 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
+                </div> */}
+                <div>
+                  {data.map((item, index) => (
+                    <div key={index} className="grow shrink basis-0 mx-2 h-[269px] p-[35px] bg-zinc-800 bg-opacity-30 rounded-[15px] border-2 border-purple-600 backdrop-blur-[25px] flex-col justify-center items-center gap-[30px] inline-flex">
+                      <div className="self-stretch grow shrink basis-0 flex-col justify-between items-center flex">
+                        <div className="self-stretch h-[49px] justify-start items-start gap-2.5 inline-flex">
+                          <img
+                            className="w-12 h-12"
+                            src={item.imgUrl}
+                            alt={`Logo for ${item.protocolName}`}
+                          />
+                          <div className="grow shrink basis-0 flex-col justify-center items-start gap-[5px] inline-flex">
+                            <div className="text-white text-[22px] font-medium font-Satoshi leading-tight">
+                              {item.protocolName}
+                            </div>
+                            <div className="px-1 py-0.5 justify-center items-center gap-2.5 inline-flex">
+                              <div className="w-[15.50px] h-[19.50px] relative"></div>
+                              <div className="text-white text-lg font-normal font-Satoshi leading-tight">
+                                {item.coverType}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="self-stretch h-[108.03px] flex-col justify-center items-center gap-5 flex">
+                          <div className="self-stretch justify-between items-center inline-flex">
+                            
+                          </div>
+                          <div className="self-stretch justify-between items-center inline-flex">
+                            <div className="text-white text-base font-normal font-Satoshi capitalize">
+                              Capacity
+                            </div>
+                            <div className="text-purple-600 text-xl font-bold font-Satoshi leading-tight">
+                              {item.capacity}
+                            </div>
+                          </div>
+                          <div className="self-stretch justify-between items-center inline-flex">
+                            <div className="text-white text-base font-normal font-Satoshi capitalize">
+                              Cover Wording
+                            </div>
+                            <div className="text-teal-600 text-xl font-normal font-Satoshi leading-tight">
+                              {item.coverWording}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -243,7 +318,7 @@ export default function Home() {
                 Leaderboard
               </div>
               <div className="self-stretch h-[132px] justify-start items-start gap-5 inline-flex">
-                <div className="grow shrink basis-0 self-stretch px-8 py-4 rounded-[15px] flex-col justify-between items-start inline-flex">
+                <div className="grow shrink basis-0 self-stretch px-8 py-4 rounded-[15px] flex-col justify-between items-start inline-flex kukkursong bg-white">
                   <div className="w-[136px] flex-col justify-between items-start flex">
                     <div className="text-white text-base font-medium font-Satoshi leading-relaxed">
                       Top Cover Amount
@@ -258,7 +333,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                <div className="grow shrink basis-0 self-stretch px-8 py-4 rounded-[15px] flex-col justify-end items-start gap-0.5 inline-flex" style={{backgroundImage:images.leaderboard1}}>
+                <div className="grow shrink basis-0 self-stretch px-8 py-4 rounded-[15px] flex-col justify-end items-start gap-0.5 inline-flex" style={{ backgroundImage: images.leaderboard1 }}>
                   <div className="w-[137px] flex-col justify-between items-start flex">
                     <div className="text-white text-base font-medium font-Satoshi leading-relaxed">
                       Top Miner

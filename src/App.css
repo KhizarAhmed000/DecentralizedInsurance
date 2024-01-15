@@ -4,3 +4,7 @@
 @tailwind utilities;
 
 
+.kukkursong{
+    background-image: url('./assets/images/leaderboard1.png')
+    
+}
