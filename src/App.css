@@ -4,7 +4,14 @@
 @tailwind utilities;
 
 
-.kukkursong{
+.leaderboard1{
     background-image: url('./assets/images/leaderboard1.png')
-    
+}
+
+.leaderboard2{
+    background-image: url('./assets/images/leaderboard2.png')
+}
+
+.leaderboard3{
+    background-image: url('./assets/images/leaderboard3.png')
 }
