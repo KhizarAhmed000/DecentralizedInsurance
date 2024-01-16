@@ -1,14 +1,10 @@
-import leaderboard1 from '../../../assets/images/leaderboard1.png';
-import leaderboard2 from '../../../assets/images/leaderboard2.png';
-import leaderboard3 from '../../../assets/images/leaderboard3.png';
-
-
+import clipboard from '../../../assets/images/clipboard.png'
+import trashcan from '../../../assets/images/trashcan.png';
 
 
 const images = {
-    leaderboard1,
-    leaderboard2,
-    leaderboard3,
+    clipboard,
+    trashcan
 };
 
 export default images;

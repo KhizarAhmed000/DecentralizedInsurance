@@ -15,3 +15,11 @@
 .leaderboard3{
     background-image: url('./assets/images/leaderboard3.png')
 }
+
+.background{
+    background-image: url('./assets/images/backgroundsolana.png');
+    background-size: cover;
+    background-repeat:repeat-y; /* Optional: prevents the background image from repeating */
+    background-position: center;
+    /* background-color: black; */
+}

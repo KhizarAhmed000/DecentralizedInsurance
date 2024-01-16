@@ -2,12 +2,20 @@ import React, { useState } from "react";
 import styles from "../../../src/App.css";
 import images from "../../services/utilities/images";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { selectWalletAddress, setWalletAddressRedux } from "../../store/WalletAddress";
 
 export default function Home() {
+  const dispatch = useDispatch()
+  const data2 = useSelector(selectWalletAddress)
+  console.log(data2);
+  
   // const [activeScreen, setactiveScreen] = useState("Home");
   const [walletAddress, setWalletAddress] = useState("")
+  // const reduxWalletAddress = useSelector(selectWalletAddress) 
   const [walletConnected, setWalletConnected] = useState(false)
   const navigate = useNavigate();
+  
 
   const data = [
     {
@@ -37,22 +45,22 @@ export default function Home() {
 
   const leaderboardData = [
     {
-      title: 'Top Miner',
-      amount: '3.4M INSUR',
-      label: 'Mined',
+      title: 'Top Cover Amount',
+      amount: '10M USDT',
+      label: 'Assets Covered',
       bgImg: 'leaderboard1'
     },
     {
       title: 'Top Miner',
-      amount: '3.4M INSUR',
+      amount: '3.4M USDT',
       label: 'Mined',
       bgImg: 'leaderboard2'
 
     },
     {
-      title: 'Top Miner',
-      amount: '3.4M INSUR',
-      label: 'Mined',
+      title: 'Top Referrer',
+      amount: '84.4K USDT',
+      label: 'Earned',
       bgImg: 'leaderboard3'
 
     },
@@ -69,7 +77,12 @@ export default function Home() {
         })
         setWalletAddress(accounts[0])
         setWalletConnected(true)
-        {walletConnected && navigate(`/UserHome/${walletAddress}`)}
+        if(accounts[0]){
+          dispatch(setWalletAddressRedux(accounts[0]))
+          navigate('/UserHome')
+        }
+        // {walletConnected && navigate(`/UserHome/${walletAddress}`)}
+        
       } catch (error) {
         console.log('Error Connecting');
       }
@@ -81,7 +94,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="w-full h-[1475px] shadow flex-col justify-start items-center gap-[150px] inline-flex bg-[#242324]">
+      <div className="w-full h-[1475px] shadow flex-col justify-start items-center gap-[150px] inline-flex bg-[#242324] background">
         <div className="w-full py-[15px] bg-black bg-opacity-60 justify-center items-center gap-[350px] inline-flex">
           <div className="w-[200px] h-[46px] pt-[0.50px] pb-[0.83px] justify-center items-center flex">
             <div className="w-[200px] h-[44.67px] relative flex-col justify-start items-start flex">
