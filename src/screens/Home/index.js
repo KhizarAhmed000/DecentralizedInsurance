@@ -8,17 +8,18 @@ import {
   setWalletAddressRedux,
 } from "../../store/WalletAddress";
 import Modal from "react-modal";
+import axios from "axios";
 
 export default function Home() {
   const dispatch = useDispatch();
   const data2 = useSelector(selectWalletAddress);
   console.log(data2);
-  const [username,setUsername] = useState('')
-  const [password,setPassword] = useState('')
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   // const [activeScreen, setactiveScreen] = useState("Home");
   const [walletAddress, setWalletAddress] = useState("");
-  const [adminLoginModal, setAdminLoginModal] = useState(true);
+  const [adminLoginModal, setAdminLoginModal] = useState(false);
   // const reduxWalletAddress = useSelector(selectWalletAddress)
   const [walletConnected, setWalletConnected] = useState(false);
   const navigate = useNavigate();
@@ -83,18 +84,48 @@ export default function Home() {
     // Add more objects as needed
   ];
 
-  const handleAdminLogin = () =>{
-    setAdminLoginModal(false)
-    console.log(password,username);
-    setAdminLoginModal(false)
-    navigate("/AdminCovers")
-  }
+  const handleAdminLogin = () => {
+    setAdminLoginModal(false);
+    console.log(password, username);
+    navigate("/AdminCovers");
+  };
 
-  const handleAdminLoginOpen =()=>{
-    setAdminLoginModal(true)
-    setPassword('')
-    setUsername('')
-  }
+  const handleAdminLoginOpen = async () => {
+    // try {
+    //   const res = await axios.post("http://192.168.100.13:3001/auth/signin", {
+    //     username:"admin",
+    //     password:"admin123",
+    //   });
+    //   console.log(res.data);
+    // } catch (error) {
+    //   console.log(error?.response?.data?.message);
+    // }
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      username: "admin",
+      password: "admin123",
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch("http://192.168.100.13:3001/auth/signin", requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.log("error", error));
+
+    // setPassword('')
+    // setUsername('')
+    // setAdminLoginModal(true)
+    // console.log(username,password,'-----<')
+  };
 
   async function requestAccount() {
     if (window.ethereum) {
@@ -340,7 +371,7 @@ export default function Home() {
                   placeholder="Enter Username"
                   type="text"
                   className=" text-white self-stretch text-xl font-bold font-Satoshi leading-tight bg-transparent"
-                  onChange={event=>setUsername(event.target.value)}
+                  onChange={(event) => setUsername(event.target.value)}
                 ></input>
               </div>
             </div>
@@ -354,7 +385,7 @@ export default function Home() {
                     placeholder="Enter Password"
                     type="password"
                     className=" text-white self-stretch text-xl font-bold font-Satoshi leading-tight bg-transparent "
-                    onChange={event=>setPassword(event.target.value)}
+                    onChange={(event) => setPassword(event.target.value)}
                   ></input>
                 </div>
               </div>
