@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from '../../screens/Home'
 import UserHome from '../../screens/UserHome'
 import Layout from "../../screens/Layout/Index";
+import AdminCovers from "../../screens/AdminCovers";
 
 const router = createBrowserRouter([
     {
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
             {
                 path:`/UserHome`,
                 element:<UserHome/>,
+            },
+            {
+                path:`/AdminCovers`,
+                element:<AdminCovers/>,
             }
         ]
     },

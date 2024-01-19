@@ -140,7 +140,7 @@ export default function UserHome() {
             <div className="px-[25px] py-3 bg-white rounded-[36px] justify-start items-center gap-2.5 flex">
               <div className="w-[14.75px] h-6 relative"></div>
               <div className="text-center text-black text-[15px] font-medium font-Satoshi capitalize leading-tight relative right-2">
-                {/* {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-2)} */}
+                {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-2)}
               </div>
             </div>
           </div>

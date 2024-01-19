@@ -23,3 +23,8 @@
     background-position: center;
     /* background-color: black; */
 }
+
+input:focus{
+    outline: none;
+    background-color: grey;
+}
