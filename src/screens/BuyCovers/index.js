@@ -3,14 +3,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectAdminName } from "../../store/Admin";
 import { selectCoverArray, setCoverArray } from "../../store/Cover";
 import { useNavigate } from "react-router-dom";
+import { selectWalletAddress, setCartCoversRedux } from "../../store/WalletAddress";
 import backendUrl from "../../services/backendurl";
 
-export default function AdminCovers() {
-  const admin = useSelector(selectAdminName);
+export default function BuyCovers() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [selectedCover, setSelectedCover] = useState("All Risk Types");
   const [covers, setCovers] = useState([]);
+  const walletAddress = useSelector(selectWalletAddress);
+  const [cartCovers,setCartCovers] = useState([])
+  const [itemCount,setItemCount] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,11 +55,31 @@ export default function AdminCovers() {
     setCoverTypes(updatedCoverTypes);
   };
 
-  const handleEditNavigate = (covers) => {
-    dispatch(setCoverArray(covers));
-    navigate("/AdminEditCovers");
-    console.log(covers);
-    console.log("poo");
+
+  const handleCartNavigate = () =>{
+    dispatch(setCartCoversRedux(cartCovers))
+    navigate('/CoverPurchase')
+  }
+
+  const addToCart = (covers) => {
+    console.log(cartCovers)
+    // Check if the chosen cover's protocol already exists in the cartCovers array
+    let isCoverAlreadyChosen = false;
+  
+    for (const cover of cartCovers) {
+      if (cover.protocol === covers.protocol) {
+        isCoverAlreadyChosen = true;
+        break;
+      }
+    }
+  
+    if (isCoverAlreadyChosen) {
+      console.log('You have already chosen this cover.');
+    } else {
+      // If the cover is not already chosen, add it to the cartCovers array
+      setCartCovers((prevArray) => [...prevArray, covers]);
+      setItemCount(cartCovers.length) 
+    }
   };
 
   const handleChooseRiskType = (riskType) => {
@@ -106,7 +129,7 @@ export default function AdminCovers() {
             </div>
             <div className="h-11 px-[25px] py-3 bg-gradient-to-r bg-white rounded-[36px] justify-center items-center gap-2.5 flex cursor-pointer">
               <div className="text-center text-black text-[15px] font-bold font-Satoshi capitalize leading-tight cursor-pointer">
-                {admin}
+                {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-2)}
               </div>
             </div>
           </div>
@@ -114,7 +137,7 @@ export default function AdminCovers() {
 
         <div className="w-[1295px]  flex-col justify-start items-start gap-[75px] inline-flex">
           <div className="text-center text-white text-5xl font-bold fontSatoshi">
-            Covers
+            Buy Covers
           </div>
           <div className="flex-col justify-start items-start gap-[35px] flex">
             <div className="w-[1295px] justify-end items-center inline-flex">
@@ -131,11 +154,9 @@ export default function AdminCovers() {
               <div className="px-7 py-3 bg-teal-600 rounded-[36px] justify-end items-start gap-2.5 flex">
                 <div
                   className="text-center text-black text-lg font-medium fontSatoshi capitalize leading-tight cursor-pointer"
-                  onClick={() => {
-                    navigate("/AdminAddCover");
-                  }}
+                  onClick={handleCartNavigate}
                 >
-                  Add Cover
+                  View Cart ({itemCount !== null ? itemCount+1 : 0})
                 </div>
               </div>
             </div>
@@ -233,10 +254,10 @@ export default function AdminCovers() {
                         <div
                           className="text-white text-lg font-medium fontSatoshi leading-tight cursor-pointer"
                           onClick={() => {
-                            handleEditNavigate(item);
+                            addToCart(item)
                           }}
                         >
-                          Edit
+                          Add to Cart
                         </div>
                       </div>
                     </div>

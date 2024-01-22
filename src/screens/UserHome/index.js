@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../../../src/App.css";
 import { useParams } from "react-router-dom";
 import images from "../../services/utilities/images";
 import { selectWalletAddress } from "../../store/WalletAddress";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import backendUrl from "../../services/backendurl";
 export default function UserHome() {
-  const walletAddress = useSelector(selectWalletAddress)
-  console.log('dasda',walletAddress);
+  const walletAddress = useSelector(selectWalletAddress);
+  // console.log("dasda  ", walletAddress);
+  const navigate = useNavigate();
+  const [userdata, setData] = useState([]);
   const CoverData = [
     {
       title: "Active Cover Amount",
@@ -26,75 +30,38 @@ export default function UserHome() {
     // Add more objects as needed
   ];
 
-  const data = [
-    {
-      title: "Extra Finance",
-      value: "12.2361",
-      unit: "ETH",
-      address: "0x231j2b41hj",
-      date: "07/10/2023 - 07/3/2024",
-      status: "Expired",
-      actions: ["clipboard", "trashcan"],
-    },
-    {
-      title: "Extra Finance",
-      value: "12.2361",
-      unit: "ETH",
-      address: "0x231j2b41hj",
-      date: "07/10/2023 - 07/3/2024",
-      status: "Active",
-      actions: ["clipboard", "trashcan"],
-    },{
-      title: "Extra Finance",
-      value: "12.2361",
-      unit: "ETH",
-      address: "0x231j2b41hj",
-      date: "07/10/2023 - 07/3/2024",
-      status: "Active",
-      actions: ["clipboard", "trashcan"],
-    },{
-      title: "Extra Finance",
-      value: "12.2361",
-      unit: "ETH",
-      address: "0x231j2b41hj",
-      date: "07/10/2023 - 07/3/2024",
-      status: "Active",
-      actions: ["clipboard", "trashcan"],
-    },{
-      title: "Extra Finance",
-      value: "12.2361",
-      unit: "ETH",
-      address: "0x231j2b41hj",
-      date: "07/10/2023 - 07/3/2024",
-      status: "Active",
-      actions: ["clipboard", "trashcan"],
-    },{
-      title: "Extra Finance",
-      value: "12.2361",
-      unit: "ETH",
-      address: "0x231j2b41hj",
-      date: "07/10/2023 - 07/3/2024",
-      status: "Active",
-      actions: ["clipboard", "trashcan"],
-    },{
-      title: "Extra Finance",
-      value: "12.2361",
-      unit: "ETH",
-      address: "0x231j2b41hj",
-      date: "07/10/2023 - 07/3/2024",
-      status: "Active",
-      actions: ["clipboard", "trashcan"],
-    },{
-      title: "Extra Finance",
-      value: "12.2361",
-      unit: "ETH",
-      address: "0x231j2b41hj",
-      date: "07/10/2023 - 07/3/2024",
-      status: "Active",
-      actions: ["clipboard", "trashcan"],
-    },
-    // Add more objects as needed
-  ];
+  useEffect(() => {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      walletAddress: walletAddress,
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch(`${backendUrl}user/getUser`, requestOptions)
+      .then((response) => response.json()) // Parse the response as JSON
+      .then((data) => {
+        // console.log(data); // Log the full data
+
+        // Access the transactions array
+        const transactions = data.user.transactions;
+        console.log(transactions); // Log the transactions
+        setData(transactions)
+        console.log('dataaaaaaaaaaaaa',userdata[0]);
+      })
+      .catch((error) => console.log("error", error));
+
+    return () => {};
+  }, []);
+
+  const getUser = () => {};
   return (
     <>
       <div className="w-full bg-[#242324]  shadow flex-col justify-start items-center gap-[150px] inline-flex background">
@@ -113,7 +80,12 @@ export default function UserHome() {
               </div>
               <div className="justify-center items-center flex">
                 <div className="self-stretch justify-start items-center inline-flex">
-                  <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
+                  <div
+                    className="text-center text-white text-[17px] font-normal font-Satoshi leading-7"
+                    onClick={() => {
+                      navigate("/BuyCovers");
+                    }}
+                  >
                     Covers
                   </div>
                   <div className="w-6 h-6 relative">
@@ -198,202 +170,39 @@ export default function UserHome() {
                 Actions
               </div>
             </div>
-            {data?.map((item, index) => (
-              <div
-                key={index}
-                className="w-[1289px] h-[67px] relative bg-white bg-opacity-10 rounded-[15px] border border-white border-opacity-25"
-              >
-                <div className="left-[45px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  {item.title}
-                </div>
-                <div className="left-[233px] top-[21px] absolute text-center">
-                  <span className="text-white text-lg font-medium font-Satoshi">
-                    {item.value}{" "}
-                  </span>
-                  <span className="text-white text-lg font-bold font-Satoshi">
-                    {item.unit}
-                  </span>
-                </div>
-                <div className="left-[446px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                {item.address?.slice(0, 6)}...{item.address?.slice(-2)}
-                </div>
-                <div className="left-[651px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  {item.date}
-                </div>
-                {item.status == "Expired" && (
-                  <div className="px-[18px] py-[9px] left-[935px] top-[11px] absolute bg-white bg-opacity-20 rounded-xl justify-start items-start gap-2.5 inline-flex">
-                    <div className="text-center text-white text-lg font-bold font-Satoshi">
-                      {item.status}
-                    </div>
+              {userdata.map((item, index) => (
+            <div className="w-[1289px] h-[67px] relative bg-white bg-opacity-10 rounded-[15px] border border-white border-opacity-25">
+                <div key={index}>
+                  <div className="left-[45px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
+                    {item.protocol}
                   </div>
-                )}
-                {item.status == "Active" && (
+                  <div className="left-[233px] top-[21px] absolute text-center">
+                    <span className="text-white text-lg font-medium font-Satoshi">
+                      {item.amount}{" "}
+                    </span>
+                    <span className="text-white text-lg font-bold font-Satoshi">
+                      ETH
+                    </span>
+                  </div>
+                  <div className="left-[446px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
+                  {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-2)}
+                  </div>
+                  <div className="left-[700px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
+                    {item.days} days
+                  </div>
+                  
                   <div className="w-[100px] px-[18px] py-[9px] left-[935px] top-[11px] absolute bg-gradient-to-r from-purple-600 to-cyan-400 rounded-xl justify-center items-center gap-2.5 inline-flex">
                     <div className="text-center text-white text-lg font-bold font-Satoshi">
-                      {item.status}
+                      Active
                     </div>
                   </div>
-                )}
-                <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
-                  {item.actions.map((action, actionIndex) => (
-                    <div
-                      key={actionIndex}
-                      className="w-[30px] h-[30px] relative cursor-pointer"
-                    >
-                      <img src={images[action]} alt={action} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-
-            {/* <div className="h-[419px] flex-col justify-start items-start gap-[21px] flex">
-              <div className="w-[1289px] h-[67px] relative bg-white bg-opacity-10 rounded-[15px] border border-white border-opacity-25">
-                <div className="left-[45px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  Extra Finance
-                </div>
-                <div className="left-[233px] top-[21px] absolute text-center">
-                  <span className="text-white text-lg font-medium font-Satoshi">
-                    12.2361{" "}
-                  </span>
-                  <span className="text-white text-lg font-bold font-Satoshi">
-                    ETH
-                  </span>
-                </div>
-                <div className="left-[446px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  0x231j2b41hj
-                </div>
-                <div className="left-[651px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  07/10/2023 - 07/3/2024
-                </div>
-                <div className="w-[100px] px-[18px] py-[9px] left-[935px] top-[11px] absolute bg-gradient-to-r from-purple-600 to-cyan-400 rounded-xl justify-center items-center gap-2.5 inline-flex">
-                  <div className="text-center text-white text-lg font-bold font-Satoshi">
-                    Active
+                  <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
+                    <div className="w-[30px] h-[30px] relative"></div>
+                    <div className="w-[30px] h-[30px] relative" />
                   </div>
                 </div>
-                <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
-                  <div className="w-[30px] h-[30px] relative"></div>
-                  <div className="w-[30px] h-[30px] relative" />
-                </div>
-              </div>
-              <div className="w-[1289px] h-[67px] relative bg-white bg-opacity-10 rounded-[15px] border border-white border-opacity-25">
-                <div className="left-[45px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  Extra Finance
-                </div>
-                <div className="left-[233px] top-[21px] absolute text-center">
-                  <span className="text-white text-lg font-medium font-Satoshi">
-                    12.2361{" "}
-                  </span>
-                  <span className="text-white text-lg font-bold font-Satoshi">
-                    ETH
-                  </span>
-                </div>
-                <div className="left-[446px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  0x231j2b41hj
-                </div>
-                <div className="left-[651px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  07/10/2023 - 07/3/2024
-                </div>
-                <div className="w-[100px] px-[18px] py-[9px] left-[935px] top-[11px] absolute bg-gradient-to-r from-purple-600 to-cyan-400 rounded-xl justify-center items-center gap-2.5 inline-flex">
-                  <div className="text-center text-white text-lg font-bold font-Satoshi">
-                    Active
-                  </div>
-                </div>
-                <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
-                  <div className="w-[30px] h-[30px] relative"></div>
-                  <div className="w-[30px] h-[30px] relative" />
-                </div>
-              </div>
-              <div className="w-[1289px] h-[67px] relative bg-white bg-opacity-10 rounded-[15px] border border-white border-opacity-25">
-                <div className="left-[45px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  Extra Finance
-                </div>
-                <div className="left-[233px] top-[21px] absolute text-center">
-                  <span className="text-white text-lg font-medium font-Satoshi">
-                    12.2361{" "}
-                  </span>
-                  <span className="text-white text-lg font-bold font-Satoshi">
-                    ETH
-                  </span>
-                </div>
-                <div className="left-[446px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  0x231j2b41hj
-                </div>
-                <div className="left-[651px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  07/10/2023 - 07/3/2024
-                </div>
-                <div className="w-[100px] px-[18px] py-[9px] left-[935px] top-[11px] absolute bg-gradient-to-r from-purple-600 to-cyan-400 rounded-xl justify-center items-start gap-2.5 inline-flex">
-                  <div className="text-center text-white text-lg font-bold font-Satoshi">
-                    Active
-                  </div>
-                </div>
-                <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
-                  <div className="w-[30px] h-[30px] relative"></div>
-                  <div className="w-[30px] h-[30px] relative" />
-                </div>
-              </div>
-              <div className="w-[1289px] h-[67px] relative bg-white bg-opacity-10 rounded-[15px] border border-white border-opacity-25">
-                <div className="left-[45px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  Extra Finance
-                </div>
-                <div className="left-[233px] top-[21px] absolute text-center">
-                  <span className="text-white text-lg font-medium font-Satoshi">
-                    12.2361{" "}
-                  </span>
-                  <span className="text-white text-lg font-bold font-Satoshi">
-                    ETH
-                  </span>
-                </div>
-                <div className="left-[446px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  0x231j2b41hj
-                </div>
-                <div className="left-[651px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  07/10/2023 - 07/3/2024
-                </div>
-                <div className="px-[18px] py-[9px] left-[935px] top-[11px] absolute bg-white bg-opacity-20 rounded-xl justify-start items-start gap-2.5 inline-flex">
-                  <div className="text-center text-white text-lg font-bold font-Satoshi">
-                    Expired
-                  </div>
-                </div>
-                <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
-                  <div className="w-[30px] h-[30px] relative">
-                    <img src={images.clipboard} />{" "}
-                  </div>
-                  <div className="w-[30px] h-[30px] relative">
-                    {" "}
-                    <img src={images.trashcan} />
-                  </div>
-                </div>
-              </div>
-              <div className="w-[1289px] h-[67px] relative bg-white bg-opacity-10 rounded-[15px] border border-white border-opacity-25">
-                <div className="left-[45px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  Extra Finance
-                </div>
-                <div className="left-[233px] top-[21px] absolute text-center">
-                  <span className="text-white text-lg font-medium font-Satoshi">
-                    12.2361{" "}
-                  </span>
-                  <span className="text-white text-lg font-bold font-Satoshi">
-                    ETH
-                  </span>
-                </div>
-                <div className="left-[446px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  0x231j2b41hj
-                </div>
-                <div className="left-[651px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  07/10/2023 - 07/3/2024
-                </div>
-                <div className="px-[18px] py-[9px] left-[935px] top-[11px] absolute bg-white bg-opacity-20 rounded-xl justify-start items-start gap-2.5 inline-flex">
-                  <div className="text-center text-white text-lg font-bold font-Satoshi">
-                    Expired
-                  </div>
-                </div>
-                <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
-                  <div className="w-[30px] h-[30px] relative"></div>
-                  <div className="w-[30px] h-[30px] relative" />
-                </div>
-              </div>
-            </div> */}
+            </div>
+              ))}
           </div>
         </div>
         <div className="w-[1295px] py-5 border-t border-neutral-700 justify-between items-center inline-flex">

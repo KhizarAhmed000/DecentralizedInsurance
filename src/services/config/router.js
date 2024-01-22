@@ -6,6 +6,8 @@ import Layout from "../../screens/Layout/Index";
 import AdminCovers from "../../screens/AdminCovers";
 import AdminEditCovers from "../../screens/AdminEditCovers";
 import AdminAddCover from "../../screens/AdminAddCover";
+import BuyCovers from "../../screens/BuyCovers";
+import CoverPurchase from "../../screens/CoverPurchase";
 
 const router = createBrowserRouter([
     {
@@ -31,6 +33,14 @@ const router = createBrowserRouter([
             {
                 path:`/AdminAddCover`,
                 element:<AdminAddCover/>,
+            },
+            {
+                path:`/BuyCovers`,
+                element:<BuyCovers/>,
+            },
+            {
+                path:`/CoverPurchase`,
+                element:<CoverPurchase/>,
             }
         ]
     },

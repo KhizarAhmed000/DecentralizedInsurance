@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../../../src/App.css";
 import images from "../../services/utilities/images";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,7 @@ import {
 import { setAdminName } from "../../store/Admin";
 import Modal from "react-modal";
 import axios from "axios";
+import backendUrl from "../../services/backendurl";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -24,6 +25,9 @@ export default function Home() {
   // const reduxWalletAddress = useSelector(selectWalletAddress)
   const [walletConnected, setWalletConnected] = useState(false);
   const navigate = useNavigate();
+  const [covers, setCovers] = useState([]);
+  const firstThreeCovers = covers.slice(0, 3);
+
 
   const customStyles = {
     content: {
@@ -37,31 +41,25 @@ export default function Home() {
     },
   };
 
-  const data = [
-    {
-      protocolName: "BabyDogeSwap",
-      coverType: "Smart Contract Vulnerability",
-      imgUrl: "https://via.placeholder.com/48x48",
-      capacity: "~ 166.0k USD",
-      coverWording: "Learn More",
-    },
-    {
-      protocolName: "BabyDogeSwap",
-      coverType: "Smart Contract Vulnerability",
-      imgUrl: "https://via.placeholder.com/48x48",
-      capacity: "~ 166.0k USD",
-      coverWording: "Learn More",
-    },
-    {
-      protocolName: "BabyDogeSwap",
-      coverType: "Smart Contract Vulnerability",
-      imgUrl: "https://via.placeholder.com/48x48",
-      capacity: "~ 166.0k USD",
-      coverWording: "Learn More",
-    },
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${backendUrl}cover/getCovers`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-    // Add more objects as needed
-  ];
+        const result = await response.json();
+        setCovers(result.covers);
+      } catch (error) {
+        console.error("Error fetching covers:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const leaderboardData = [
     {
@@ -105,7 +103,7 @@ export default function Home() {
       redirect: "follow",
     };
 
-    fetch("http://192.168.18.124:3001/auth/signin", requestOptions)
+    fetch(`${backendUrl}auth/signin`, requestOptions)
       .then((response) => response.text())
       .then((result) => {
         console.log(result);
@@ -165,7 +163,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="w-full h-[1475px] shadow flex-col justify-start items-center gap-[150px] inline-flex bg-[#242324] background">
+      <div className="w-full h-auto shadow flex-col justify-start items-center gap-[150px] inline-flex bg-[#242324] background">
         <div className="w-full py-[15px] bg-black bg-opacity-60 justify-center items-center gap-[350px] inline-flex">
           <div className="w-[200px] h-[46px] pt-[0.50px] pb-[0.83px] justify-center items-center flex">
             <div className="w-[200px] h-[44.67px] relative flex-col justify-start items-start flex">
@@ -240,52 +238,60 @@ export default function Home() {
                 New Products
               </div>
               <div className="self-stretch justify-start items-start gap-5 inline-flex">
-                <div>
-                  {data.map((item, index) => (
+                <div className="h-[1100] self-stretch justify-center items-center gap-10 flex-wrap inline-flex">
+                  {firstThreeCovers.map((item, index) => (
                     <div
-                      key={index}
-                      className="grow shrink basis-0 mx-2 h-[269px] p-[35px] bg-zinc-800 bg-opacity-30 rounded-[15px] border-2 border-purple-600 backdrop-blur-[25px] flex-col justify-center items-center gap-[30px] inline-flex"
-                    >
-                      <div className="self-stretch grow shrink basis-0 flex-col justify-between items-center flex">
-                        <div className="self-stretch h-[49px] justify-start items-start gap-2.5 inline-flex">
-                          <img
-                            className="w-12 h-12"
-                            src={item.imgUrl}
-                            alt={`Logo for ${item.protocolName}`}
-                          />
-                          <div className="grow shrink basis-0 flex-col justify-center items-start gap-[5px] inline-flex">
-                            <div className="text-white text-[22px] font-medium font-Satoshi leading-tight">
-                              {item.protocolName}
-                            </div>
-                            <div className="px-1 py-0.5 justify-center items-center gap-2.5 inline-flex">
-                              <div className="w-[15.50px] h-[19.50px] relative"></div>
-                              <div className="text-white text-lg font-normal font-Satoshi leading-tight">
-                                {item.coverType}
-                              </div>
-                            </div>
+                    key={index}
+                    className={`h-[300px] w-[350px] pl-[35px] pr-[34.67px] py-[35px] bg-zinc-800 bg-opacity-30 rounded-[15px] border-2 border-purple-600 backdrop-blur-[25px] justify-center items-center flex `}
+                  >
+                    <div className="grow shrink basis-0 self-stretch flex-col justify-start items-end gap-[30px] inline-flex">
+                      <div className="self-stretch h-[49px] justify-start items-start gap-2.5 inline-flex">
+                        <img
+                          className="w-12 h-12"
+                          src={item.imageURL}
+                          alt={item.name}
+                        />
+                        <div className="grow shrink basis-0 flex-col justify-center items-start gap-[5px] inline-flex">
+                          <div className="text-white text-[22px] font-medium fontSatoshi leading-tight">
+                            {item.protocol}
                           </div>
-                        </div>
-                        <div className="self-stretch h-[108.03px] flex-col justify-center items-center gap-5 flex">
-                          <div className="self-stretch justify-between items-center inline-flex"></div>
-                          <div className="self-stretch justify-between items-center inline-flex">
-                            <div className="text-white text-base font-normal font-Satoshi capitalize">
-                              Capacity
-                            </div>
-                            <div className="text-purple-600 text-xl font-bold font-Satoshi leading-tight">
-                              {item.capacity}
-                            </div>
-                          </div>
-                          <div className="self-stretch justify-between items-center inline-flex">
-                            <div className="text-white text-base font-normal font-Satoshi capitalize">
-                              Cover Wording
-                            </div>
-                            <div className="text-teal-600 text-xl font-normal font-Satoshi leading-tight">
-                              {item.coverWording}
+                          <div className="px-1 py-0.5 justify-center items-center gap-2.5 inline-flex">
+                            <div className="w-[15.50px] h-[19.50px] relative"></div>
+                            <div className="text-white text-sm font-normal fontSatoshi leading-tight">
+                              {item.coverType}
                             </div>
                           </div>
                         </div>
                       </div>
+                      <div className="self-stretch h-[152px] flex-col justify-center items-center gap-2.5 flex">
+                        <div className="self-stretch justify-between items-center inline-flex">
+                          <div className="text-white text-base font-normal fontSatoshi capitalize">
+                            Capacity
+                          </div>
+                          <div className="text-white text-xl font-bold fontSatoshi leading-tight">
+                            ~ {item.capacity} USD
+                          </div>
+                        </div>
+                        <div className="self-stretch justify-between items-center inline-flex">
+                          <div className="text-white text-base font-normal fontSatoshi capitalize">
+                            daily Cost
+                          </div>
+                          <div className="text-white text-xl font-bold fontSatoshi leading-tight">
+                            {item.dailyCost}%
+                          </div>
+                        </div>
+                        <div className="self-stretch justify-between items-center inline-flex">
+                          <div className="text-white text-base font-normal fontSatoshi capitalize">
+                            Security Rating
+                          </div>
+                          <div className="text-teal-600 text-xl font-bold fontSatoshi leading-tight">
+                            {item.securityRating}
+                          </div>
+                        </div>
+                      </div>
+                     
                     </div>
+                  </div>
                   ))}
                 </div>
               </div>
@@ -298,9 +304,9 @@ export default function Home() {
               <div className="w-[15px] h-[15px] rounded-full border border-white" />
             </div> */}
           </div>
-          <div className="flex-col justify-start items-center gap-[35px] flex">
-            <div className="h-[216px] flex-col justify-start items-start gap-[35px] flex">
-              <div className="text-center text-white text-4xl font-bold font-Satoshi">
+          <div className="flex-col justify-start items-center gap-[35px] flex my-24">
+            <div className="h-[216px] flex-col justify-start items-start gap-[35px] flex ">
+              <div className="text-center text-white text-4xl font-bold font-Satoshi ">
                 Leaderboard
               </div>
               <div className="self-stretch h-[132px] justify-start items-start gap-5 inline-flex">

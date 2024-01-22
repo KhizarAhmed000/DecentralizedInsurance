@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAdminName } from "../../store/Admin";
 import images from "../../services/utilities/images";
 import { useNavigate } from "react-router-dom";
-
+import backendUrl from "../../services/backendurl";
 
 export default function AdminAddCover() {
   const admin = useSelector(selectAdminName);
@@ -12,20 +12,22 @@ export default function AdminAddCover() {
   const [capacity, setCapacity] = useState();
   const [securityRating, setSecurityRating] = useState("AAA");
   const [dailyCost, setDailyCost] = useState();
+  const [imageURL, setImageURL] = useState();
   const [toggleDropDown, setToggleDropDown] = useState(true);
   const [toggleDropDown2, setToggleDropDown2] = useState(true);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
 
   const addCover = () => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-
     var raw = JSON.stringify({
       protocol: protocol,
       dailyCost: dailyCost,
       capacity: capacity,
       securityRating: securityRating,
       coverType: coverType,
+      imageURL: imageURL,
     });
 
     var requestOptions = {
@@ -35,19 +37,68 @@ export default function AdminAddCover() {
       redirect: "follow",
     };
 
-    fetch("http://192.168.18.124:3001/cover/createCover", requestOptions)
+    fetch(`${backendUrl}cover/createCover`, requestOptions)
       .then((response) => response.text())
       .then((result) => {
-        console.log(result)
+        console.log(result);
         if (result.includes("cover added")) {
-            console.log(result)
-            navigate("/AdminCovers");
-          } else {
-            console.log("cover adding failed");
-          }
+          console.log(result);
+          navigate("/AdminCovers");
+        } else {
+          console.log("cover adding failed");
+        }
       })
       .catch((error) => console.log("error", error));
-    ;
+  };
+
+  // const getLogoUrl = () => {
+  //   var formdata = new FormData();
+  //   formdata.append(
+  //     "image",
+  //     new Blob([image]),
+  //     image.name
+  //   );
+
+  //   var requestOptions = {
+  //     method: "POST",
+  //     body: formdata,
+  //     redirect: "follow",
+  //   };
+
+  //   fetch("http://192.168.100.24::3001/auth/uploadProfile", requestOptions)
+  //     .then((response) => response.text())
+  //     .then((result) => console.log(result))
+  //     .catch((error) => console.log("error", error));
+
+  // };
+
+  const handleUpload = async () => {
+    const fileInput = fileInputRef.current;
+    if (fileInput && fileInput.files.length > 0) {
+      const formData = new FormData();
+      formData.append("image", fileInput.files[0]);
+
+      try {
+        const response = await fetch(
+          `${backendUrl}auth/uploadProfile`,
+          {
+            method: "POST",
+            body: formData,
+            redirect: "follow",
+          }
+        );
+
+        const result = await response.text();
+        const {url} = JSON.parse(result)
+        
+        setImageURL(url);
+        console.log("image uploaded successfully allah khair please, url:",url)
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    } else {
+      console.log("No file selected");
+    }
   };
 
   const securityRatings = [
@@ -78,6 +129,9 @@ export default function AdminAddCover() {
 
   const toggleDropDownFunction2 = () => {
     setToggleDropDown2(!toggleDropDown2);
+    // console.log(image);
+    // getLogoUrl();
+    // handleUpload()
   };
   //   const handleDropDown = ({func, item}) =>{
   //     // setToggleDropDown(!toggleDropDown)
@@ -138,24 +192,24 @@ export default function AdminAddCover() {
         <div className="w-[1302px] h-[592px] flex-col justify-start items-start gap-[75px] inline-flex">
           <div className="self-stretch justify-between items-center inline-flex">
             <div className="justify-center items-center gap-5 flex">
-              <div className="text-center text-white text-[32px] font-bold font-['Satoshi'] tracking-wide">
+              <div className="text-center text-white text-[32px] font-bold font-Satoshi tracking-wide">
                 Add Cover
               </div>
             </div>
           </div>
           <div className="self-stretch justify-start items-start gap-[75px] inline-flex">
             <div className="grow shrink basis-0 flex-col justify-start items-start gap-[25px] inline-flex">
-              <div className="self-stretch text-white text-2xl font-bold font-['Satoshi']">
+              <div className="self-stretch text-white text-2xl font-bold font-Satoshi">
                 Cover Info
               </div>
               <div className="self-stretch h-[410px] p-[25px] bg-white bg-opacity-10 rounded-[20px] border border-white border-opacity-25 backdrop-blur-[25px] flex-col justify-center items-center gap-[15px] flex">
                 <div className="self-stretch justify-between items-center inline-flex">
-                  <div className="text-white text-lg font-normal font-['Satoshi'] capitalize">
+                  <div className="text-white text-lg font-normal font-Satoshi capitalize">
                     Protocol
                   </div>
                   <div className="h-11 px-2.5 py-3 bg-white bg-opacity-10 rounded-[10px] justify-between items-center flex">
                     <input
-                      className="text-white text-xl font-bold font-['Satoshi'] leading-tight text-right"
+                      className="text-white text-xl font-bold font-Satoshi leading-tight text-right"
                       placeholder="Enter Protocol"
                       type="text"
                       onChange={(event) => setProtocol(event.target.value)}
@@ -163,12 +217,12 @@ export default function AdminAddCover() {
                   </div>
                 </div>
                 <div className="self-stretch justify-between items-center inline-flex">
-                  <div className="text-white text-lg font-normal font-['Satoshi'] capitalize">
+                  <div className="text-white text-lg font-normal font-Satoshi capitalize">
                     Capacity
                   </div>
                   <div className="h-11 px-2.5 py-3 bg-white bg-opacity-10 rounded-[10px] justify-between items-center flex">
                     <input
-                      className="text-white text-xl font-bold font-['Satoshi'] leading-tight text-right"
+                      className="text-white text-xl font-bold font-Satoshi leading-tight text-right"
                       placeholder="Enter Capacity"
                       type="text"
                       onChange={(event) => {
@@ -178,19 +232,38 @@ export default function AdminAddCover() {
                   </div>
                 </div>
                 <div className="self-stretch justify-between items-center inline-flex">
-                  <div className="text-white text-lg font-normal font-['Satoshi'] capitalize">
+                  <div className="text-white text-lg font-normal font-Satoshi capitalize">
                     daily Cost
                   </div>
                   <div className="h-11 px-2.5 py-3 bg-white bg-opacity-10 rounded-[10px] justify-between items-center flex">
                     <input
-                      className="text-white text-xl font-bold font-['Satoshi'] leading-tight text-right"
+                      className="text-white text-xl font-bold font-Satoshi leading-tight text-right"
                       placeholder="Enter Daily Cost %"
                       onChange={(event) => setDailyCost(event.target.value)}
                     />
                   </div>
                 </div>
+                <div className="self-stretch justify-between items-center inline-flex">
+                  <div className="text-white text-lg font-normal font-Satoshi capitalize">
+                    Upload Logo
+                  </div>
+                  <div className="h-11 px-2.5 py-3 bg-white bg-opacity-10 rounded-[10px] justify-between items-center flex">
+                    <input
+                      className="text-white text-l  font-Satoshi leading-tight align-right"
+                      type="file"
+                      // onChange={(event) => setImage(event.target.files[0])}
+                      ref={fileInputRef}
+                      // onClick={handleUpload}
+                    />
+                    <div className=" text-center  text-white text-[10px] font-bold font-Satoshi cursor-pointer"
+                    onClick={handleUpload}
+                    >
+                      Upload Cover
+                    </div>
+                  </div>
+                </div>
                 <div className="self-stretch justify-between items-center inline-flex h-11">
-                  <div className="text-white text-lg font-normal font-['Satoshi'] capitalize ">
+                  <div className="text-white text-lg font-normal font-Satoshi capitalize ">
                     Security Rating
                   </div>
                   {toggleDropDown ? (
@@ -198,7 +271,7 @@ export default function AdminAddCover() {
                       className="h-11 p-2.5 bg-white bg-opacity-10 rounded-[10px] justify-between items-center flex cursor-pointer"
                       onClick={toggleDropDownFunction}
                     >
-                      <div className="text-teal-600 text-xl font-bold font-['Satoshi'] leading-tight">
+                      <div className="text-teal-600 text-xl font-bold font-Satoshi leading-tight">
                         {securityRating}
                       </div>
                       <img
@@ -211,7 +284,7 @@ export default function AdminAddCover() {
                       {securityRatings.map((item, index) => (
                         <div
                           key={index}
-                          className="text-teal-600 text-xl font-bold font-['Satoshi'] leading-tight cursor-pointer"
+                          className="text-teal-600 text-xl font-bold font-Satoshi leading-tight cursor-pointer"
                           onClick={() => {
                             setSecurityRating(item);
                             toggleDropDownFunction();
@@ -224,7 +297,7 @@ export default function AdminAddCover() {
                   )}
                 </div>
                 <div className="self-stretch justify-between items-center inline-flex">
-                  <div className="text-white text-lg font-normal font-['Satoshi'] capitalize h-11">
+                  <div className="text-white text-lg font-normal font-Satoshi capitalize h-11">
                     Cover Type
                   </div>
                   {toggleDropDown2 ? (
@@ -232,7 +305,7 @@ export default function AdminAddCover() {
                       className="h-11 p-2.5 bg-white bg-opacity-10 rounded-[10px] justify-between items-center flex"
                       onClick={toggleDropDownFunction2}
                     >
-                      <div className="text-teal-600 text-xl font-bold font-['Satoshi'] leading-tight">
+                      <div className="text-teal-600 text-xl font-bold font-Satoshi leading-tight">
                         {coverType}
                       </div>
                       <img
@@ -245,7 +318,7 @@ export default function AdminAddCover() {
                       {coverTypes.map((item, index) => (
                         <div
                           key={index}
-                          className="text-teal-600 text-xl font-bold font-['Satoshi'] leading-tight cursor-pointer"
+                          className="text-teal-600 text-xl font-bold font-Satoshi leading-tight cursor-pointer"
                           onClick={() => {
                             setCoverType(item);
                             toggleDropDownFunction2();
@@ -261,56 +334,59 @@ export default function AdminAddCover() {
             </div>
             <div className="grow shrink basis-0 flex-col justify-start items-start gap-5 inline-flex">
               <div className="self-stretch h-[59px] flex-col justify-start items-start gap-[5px] flex">
-                <div className="self-stretch text-white text-2xl font-bold font-['Satoshi']">
+                <div className="self-stretch text-white text-2xl font-bold font-Satoshi">
                   Details
                 </div>
                 <div className="self-stretch justify-start items-start gap-2.5 inline-flex">
-                  <div className="grow shrink basis-0 text-white text-base font-normal font-['Satoshi'] lowercase">
+                  <div className="grow shrink basis-0 text-white text-base font-normal font-Satoshi lowercase">
                     PLease review the details before adding.
                   </div>
                 </div>
               </div>
               <div className="h-[250px] w-[500px] p-[25px] rounded-[20px] border border-white border-opacity-50 backdrop-blur-[25px] flex-col justify-center items-center gap-[15px] flex">
                 <div className="self-stretch justify-between items-center inline-flex">
-                  <div className="text-white text-lg font-normal font-['Satoshi'] capitalize">
+                  <div className="text-white text-lg font-normal font-Satoshi capitalize">
                     Capacity
                   </div>
-                  <div className="text-white text-xl font-bold font-['Satoshi'] leading-tight">
+                  <div className="text-white text-xl font-bold font-Satoshi leading-tight">
                     ~ {capacity} USD
                   </div>
                 </div>
                 <div className="self-stretch justify-between items-center inline-flex">
-                  <div className="text-white text-lg font-normal font-['Satoshi'] capitalize">
+                  <div className="text-white text-lg font-normal font-Satoshi capitalize">
                     daily Cost
                   </div>
-                  <div className="text-white text-xl font-bold font-['Satoshi'] leading-tight">
+                  <div className="text-white text-xl font-bold font-Satoshi leading-tight">
                     {dailyCost}%
                   </div>
                 </div>
                 <div className="self-stretch justify-between items-center inline-flex">
-                  <div className="text-white text-lg font-normal font-['Satoshi'] capitalize">
+                  <div className="text-white text-lg font-normal font-Satoshi capitalize">
                     Security Rating
                   </div>
-                  <div className="text-white text-xl font-bold font-['Satoshi'] leading-tight">
+                  <div className="text-white text-xl font-bold font-Satoshi leading-tight">
                     {securityRating}
                   </div>
                 </div>
                 <div className="self-stretch justify-between items-center inline-flex">
-                  <div className="text-white text-lg font-normal font-['Satoshi'] capitalize">
+                  <div className="text-white text-lg font-normal font-Satoshi capitalize">
                     Cover Type
                   </div>
-                  <div className="text-white text-xl font-bold font-['Satoshi'] leading-tight">
+                  <div className="text-white text-xl font-bold font-Satoshi leading-tight">
                     {coverType}
                   </div>
                 </div>
 
                 {/* <div className="self-stretch justify-between items-center inline-flex">
-          <div className="text-white text-lg font-normal font-['Satoshi'] capitalize">Cover Wording</div>
-          <div className="text-white text-xl font-bold font-['Satoshi'] leading-tight">Cover Wording...</div>
+          <div className="text-white text-lg font-normal font-Satoshi capitalize">Cover Wording</div>
+          <div className="text-white text-xl font-bold font-Satoshi leading-tight">Cover Wording...</div>
         </div> */}
               </div>
               <div className="px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex cursor-pointer">
-                <div className="text-center text-black text-xl font-bold font-['Satoshi'] capitalize leading-tight " onClick={addCover}>
+                <div
+                  className="text-center text-black text-xl font-bold font-Satoshi capitalize leading-tight "
+                  onClick={addCover}
+                >
                   Add Cover
                 </div>
               </div>
