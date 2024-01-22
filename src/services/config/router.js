@@ -4,6 +4,8 @@ import Home from '../../screens/Home'
 import UserHome from '../../screens/UserHome'
 import Layout from "../../screens/Layout/Index";
 import AdminCovers from "../../screens/AdminCovers";
+import AdminEditCovers from "../../screens/AdminEditCovers";
+import AdminAddCover from "../../screens/AdminAddCover";
 
 const router = createBrowserRouter([
     {
@@ -21,6 +23,14 @@ const router = createBrowserRouter([
             {
                 path:`/AdminCovers`,
                 element:<AdminCovers/>,
+            },
+            {
+                path:`/AdminEditCovers`,
+                element:<AdminEditCovers/>,
+            },
+            {
+                path:`/AdminAddCover`,
+                element:<AdminAddCover/>,
             }
         ]
     },

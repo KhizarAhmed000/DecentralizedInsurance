@@ -7,6 +7,7 @@ import {
   selectWalletAddress,
   setWalletAddressRedux,
 } from "../../store/WalletAddress";
+import { setAdminName } from "../../store/Admin";
 import Modal from "react-modal";
 import axios from "axios";
 
@@ -85,9 +86,41 @@ export default function Home() {
   ];
 
   const handleAdminLogin = () => {
-    setAdminLoginModal(false);
-    console.log(password, username);
-    navigate("/AdminCovers");
+    // setAdminLoginModal(false);
+    // console.log(password, username);
+    // navigate("/AdminCovers");
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      username: username,
+      password: password,
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch("http://192.168.18.124:3001/auth/signin", requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        console.log(result);
+    
+        // Check if the response indicates success, adjust this condition based on your API response
+        if (result.includes("Login successfully")) {
+          // Perform navigation here
+          navigate("/AdminCovers");
+          dispatch(setAdminName(username));
+        } else {
+          // Handle other cases if needed
+          console.log("Login failed");
+        }
+      })
+      .catch((error) => console.log("error", error));
   };
 
   const handleAdminLoginOpen = async () => {
@@ -101,30 +134,11 @@ export default function Home() {
     //   console.log(error?.response?.data?.message);
     // }
 
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
 
-    var raw = JSON.stringify({
-      username: "admin",
-      password: "admin123",
-    });
-
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
-
-    fetch("http://192.168.100.13:3001/auth/signin", requestOptions)
-      .then((response) => response.text())
-      .then((result) => console.log(result))
-      .catch((error) => console.log("error", error));
-
-    // setPassword('')
-    // setUsername('')
-    // setAdminLoginModal(true)
-    // console.log(username,password,'-----<')
+    setPassword('')
+    setUsername('')
+    setAdminLoginModal(true)
+    console.log(username,password,'-----<')
   };
 
   async function requestAccount() {
@@ -368,9 +382,9 @@ export default function Home() {
               </div>
               <div className="self-stretch h-[50px] p-[15px] bg-white bg-opacity-10 rounded-[10px] flex-col justify-start items-start gap-2.5 flex">
                 <input
+                  m className=" text-white self-stretch text-xl font-bold font-Satoshi leading-tight bg-transparent"
                   placeholder="Enter Username"
                   type="text"
-                  className=" text-white self-stretch text-xl font-bold font-Satoshi leading-tight bg-transparent"
                   onChange={(event) => setUsername(event.target.value)}
                 ></input>
               </div>
