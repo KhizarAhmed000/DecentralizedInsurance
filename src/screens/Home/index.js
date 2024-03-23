@@ -11,6 +11,7 @@ import { setAdminName } from "../../store/Admin";
 import Modal from "react-modal";
 import axios from "axios";
 import backendUrl from "../../services/backendurl";
+import { useAuth } from "../../services/authcontext";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -18,6 +19,8 @@ export default function Home() {
   console.log(data2);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const { addresses,setAddresses } = useAuth();
 
   // const [activeScreen, setactiveScreen] = useState("Home");
   const [walletAddress, setWalletAddress] = useState("");
@@ -148,6 +151,7 @@ export default function Home() {
         });
         setWalletAddress(accounts[0]);
         setWalletConnected(true);
+        setAddresses(accounts)
         if (accounts[0]) {
           dispatch(setWalletAddressRedux(accounts[0]));
           navigate("/UserHome");
@@ -227,6 +231,9 @@ export default function Home() {
               <div
                 className="text-center text-white text-xl font-medium font-Satoshi capitalize leading-tight"
                 onClick={requestAccount}
+                // onClick={()=>{
+
+                // }}
               >
                 Connect Wallet
               </div>

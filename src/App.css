@@ -32,3 +32,8 @@ input:focus{
 input{
     background-color: #313131
 }
+
+
+.container-snap::-webkit-scrollbar {
+    display: none;
+}

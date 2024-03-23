@@ -64,7 +64,7 @@ export default function UserHome() {
   const getUser = () => {};
   return (
     <>
-      <div className="w-full bg-[#242324]  shadow flex-col justify-start items-center gap-[150px] inline-flex background">
+      <div className="w-full bg-[#242324]  shadow flex-col justify-start items-center gap-[150px] inline-flex background container-snap">
         <div className="w-full py-[15px] bg-black bg-opacity-60 justify-center items-center gap-[350px] inline-flex">
           <div className="w-[200px] h-[46px] pt-[0.50px] pb-[0.83px] justify-center items-center flex">
             <div className="w-[200px] h-[44.67px] relative flex-col justify-start items-start flex">
@@ -148,7 +148,7 @@ export default function UserHome() {
               </div>
             </div>
           </div>
-          <div className="flex-col justify-start items-center gap-[35px] flex">
+          {userdata[0] ? <div className="flex-col justify-start items-center gap-[35px] flex">
             <div className="self-stretch px-[3px] justify-center items-center gap-[61px] inline-flex">
               <div className="w-[118.22px] text-center text-white text-2xl font-bold font-Satoshi">
                 Protocol
@@ -204,6 +204,10 @@ export default function UserHome() {
             </div>
               ))}
           </div>
+          
+        :
+        <div className="  font-Satoshi text-white text-3xl font-bold">You haven't covered your crypto assets!</div>
+        }
         </div>
         <div className="w-[1295px] py-5 border-t border-neutral-700 justify-between items-center inline-flex">
           <div className="w-[334px] h-[27px] relative">
