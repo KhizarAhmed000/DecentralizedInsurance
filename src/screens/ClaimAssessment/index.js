@@ -6,12 +6,12 @@ import { selectWalletAddress } from "../../store/WalletAddress";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import backendUrl from "../../services/backendurl";
-export default function UserHome() {
+export default function ClaimAssessments() {
   const walletAddress = useSelector(selectWalletAddress);
   // console.log("dasda  ", walletAddress);
   const navigate = useNavigate();
-  const [userdata, setData] = useState([]);
-  const [covers, setCovers] = useState()
+  const [userdata, setData] = useState();
+  const [claims, setClaims] = useState([''])
   const CoverData = [
     {
       title: "Active Cover Amount",
@@ -61,53 +61,36 @@ export default function UserHome() {
       })
       .catch((error) => console.log("error", error));
 
-
-
+       
+    // const handleGetClaims = () => {
+    //     const myHeaders = new Headers();
+    //     myHeaders.append("Content-Type", "application/json");
+      
     const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${backendUrl}cover/getCovers`
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+        try {
+          const response = await fetch(
+            `${backendUrl}claim/getClaims`
+          );
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response}`);
+          }
+  
+          const result = await response.json();
+          setClaims(result);
+        } catch (error) {
+          console.error("Error fetching claims:", error);
         }
-
-        const result = await response.json();
-        setCovers(result.covers);
-      } catch (error) {
-        console.error("Error fetching covers:", error);
-      }
-    };
-
-    fetchData();
-
-
+      };
+  
+      fetchData();
+  
+    //   handleGetClaims(); 
   }, []);
 
 
-  const onClaim = async (i,item) => {
-    const userCover = await findCover(userdata[i].protocol)
-    console.log('testtt',userCover)
-    navigate('/SubmitClaim', { state: { userdata: item, walletAddress: walletAddress,userCover:userCover } })
-  }
-  const findCover = async (protocol) => {
-
-    for (const item of covers) {
-
-      console.log('huhh', item.protocol)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-      console.log(protocol)
-      if (item.protocol == protocol) {
-        return item;
-      }
-    }
 
 
-    return false;
-  }
-
-
-
-  const getUser = () => { };
+  
   return (
     <>
       <div className="w-full bg-[#242324]  shadow flex-col justify-start items-center gap-[150px] inline-flex background container-snap">
@@ -140,9 +123,7 @@ export default function UserHome() {
                 </div>
               </div>
               <div className="justify-center items-center flex">
-                <div className="text-center text-white text-lg font-normal font-Satoshi leading-7" onClick={()=>{
-                  navigate('/ClaimAssessments')
-                }}>
+                <div className="text-center text-white text-lg font-normal font-Satoshi leading-7">
                   Claims
                 </div>
               </div>
@@ -169,7 +150,7 @@ export default function UserHome() {
           <div className="flex-col justify-start items-center gap-[35px] flex">
             <div className="h-[232px] flex-col justify-start items-start gap-[35px] flex">
               <div className="text-center text-white text-5xl font-bold font-Satoshi">
-                Your Covers
+                Your Claims
               </div>
 
               <div className="self-stretch h-[132px] justify-start items-start gap-5 inline-flex">
@@ -196,29 +177,29 @@ export default function UserHome() {
               </div>
             </div>
           </div>
-          {userdata[0] ? <div className="flex-col justify-start items-center gap-[35px] flex">
+           <div className="flex-col justify-start items-center gap-[35px] flex">
             <div className="self-stretch px-[3px] justify-center items-center gap-[61px] inline-flex">
               <div className="w-[118.22px] text-center text-white text-2xl font-bold font-Satoshi">
                 Protocol
               </div>
               <div className="text-center text-white text-2xl font-bold font-Satoshi">
                 {" "}
-                Cover Amount
+                Cover Type
               </div>
               <div className="text-center text-white text-2xl font-bold font-Satoshi">
-                Covered Address
+                Claim Amount
               </div>
               <div className="text-center text-white text-2xl font-bold font-Satoshi">
                 Cover Period
               </div>
               <div className="w-[153.05px] text-center text-white text-2xl font-bold font-Satoshi">
-                Status
+              Claim Status
               </div>
               <div className="w-[159.39px] text-center text-white text-2xl font-bold font-Satoshi">
                 Actions
               </div>
             </div>
-            {userdata.map((item, index) => (
+            {claims.map((item, index) => (
               <div className="w-[1289px] h-[67px] relative bg-white bg-opacity-10 rounded-[15px] border border-white border-opacity-25">
                 <div key={index}>
                   <div className="left-[45px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
@@ -226,29 +207,27 @@ export default function UserHome() {
                   </div>
                   <div className="left-[233px] top-[21px] absolute text-center">
                     <span className="text-white text-lg font-medium font-Satoshi">
-                      {item.amount}{" "}
+                      {item.coverType}{" "}
                     </span>
-                    <span className="text-white text-lg font-bold font-Satoshi">
-                      ETH
-                    </span>
+                  
                   </div>
                   <div className="left-[446px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                    {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-2)}
+                    {item.claimAmount}
                   </div>
                   <div className="left-[700px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                    {item.days} days
+                    {item.coverPeriod} 
                   </div>
 
-                  <div className="w-[100px] px-[18px] py-[9px] left-[935px] top-[11px] absolute bg-gradient-to-r from-purple-600 to-cyan-400 rounded-xl justify-center items-center gap-2.5 inline-flex">
+                  <div className="w-[100px] px-[30px] py-[9px] left-[935px] top-[11px] absolute bg-gradient-to-r from-purple-600 to-cyan-400 rounded-xl justify-center items-center gap-2.5 inline-flex">
                     <div className="text-center text-white text-lg font-bold font-Satoshi">
-                      Active
+                      {item.claimStatus}
                     </div>
                   </div>
                   <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
                     <div className="w-[30px] h-[30px] relative cursor-pointer"><img src={images.trashcan} /></div>
                     <div className="w-[30px] h-[30px] relative cursor-pointer"
                       onClick={()=>{
-                        onClaim(index,item)
+                        // onClaim(index,item)
                       }}><img src={images.clipboard} /></div>
                   </div>
                 </div>
@@ -256,9 +235,7 @@ export default function UserHome() {
             ))}
           </div>
 
-            :
-            <div className="  font-Satoshi text-white text-3xl font-bold">You haven't covered your crypto assets!</div>
-          }
+          
         </div>
         <div className="w-[1295px] py-5 border-t border-neutral-700 justify-between items-center inline-flex mt-44">
           <div className="w-[334px] h-[27px] relative">
