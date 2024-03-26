@@ -8,6 +8,7 @@ import AdminEditCovers from "../../screens/AdminEditCovers";
 import AdminAddCover from "../../screens/AdminAddCover";
 import BuyCovers from "../../screens/BuyCovers";
 import CoverPurchase from "../../screens/CoverPurchase";
+import SubmitClaim from "../../screens/SubmitClaim";
 
 const router = createBrowserRouter([
     {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
             {
                 path:`/CoverPurchase`,
                 element:<CoverPurchase/>,
+            },
+            {
+                path:"/SubmitClaim",
+                element:<SubmitClaim/>
             }
         ]
     },

@@ -111,7 +111,7 @@ export default function CoverPurchase() {
           <div className="self-stretch h-[134px] flex-col justify-start items-start gap-[35px] flex">
             <div className="justify-center items-center gap-5 inline-flex">
               <div className="text-center text-white text-[32px] font-bold font-Satoshi tracking-wide">
-                Portfolio-based Cover Purchase
+                Cover Purchase
               </div>
             </div>
             {/* <div className="w-[603px] h-14 px-5 bg-white bg-opacity-20 rounded-[15px] border border-black border-opacity-25 justify-start items-center gap-5 inline-flex">
@@ -170,9 +170,10 @@ export default function CoverPurchase() {
                         <input
                           className="text-zinc-400 text-xl font-medium font-Satoshi leading-[27.10px]"
                           placeholder="Enter Address"
-                          onChange={(event) =>
-                            (newArray[index].address = event.target.value)
-                          }
+                          value={walletAddress}
+                          // onChange={(event) =>
+                          //   (newArray[index].address = event.target.value)
+                          // }
                         />
                       </div>
                     </div>
@@ -253,9 +254,16 @@ export default function CoverPurchase() {
                   <div className="text-white text-lg font-normal font-Satoshi capitalize">
                     Referral Code
                   </div>
-                  <div className="text-neutral-500 text-xl font-normal font-Satoshi leading-tight">
-                    Please Enter
-                  </div>
+                  <div className="px-[13px] py-[5.75px] rounded-[5px] justify-start items-start gap-2.5 flex">
+                        <input
+                          className="text-zinc-400 text-xl font-medium font-Satoshi leading-[27.10px]"
+                          placeholder="Enter Referral Code"
+                          // value={walletAddress}
+                          // onChange={(event) =>
+                          //   (newArray[index].address = event.target.value)
+                          // }
+                        />
+                      </div>
                 </div>
               </div>
               <div className="h-[150px] flex-col justify-between items-start inline-flex">

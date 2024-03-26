@@ -11,6 +11,7 @@ export default function UserHome() {
   // console.log("dasda  ", walletAddress);
   const navigate = useNavigate();
   const [userdata, setData] = useState([]);
+  const [covers, setCovers] = useState()
   const CoverData = [
     {
       title: "Active Cover Amount",
@@ -52,16 +53,61 @@ export default function UserHome() {
 
         // Access the transactions array
         const transactions = data.user.transactions;
+        const walletAddress = data.user.walletAddress;
+        console.log('test', walletAddress)
         console.log(transactions); // Log the transactions
         setData(transactions)
-        console.log('dataaaaaaaaaaaaa',userdata[0]);
+        console.log('dataaaaaaaaaaaaa', userdata[0]);
       })
       .catch((error) => console.log("error", error));
 
-    return () => {};
+
+
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${backendUrl}cover/getCovers`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        setCovers(result.covers);
+      } catch (error) {
+        console.error("Error fetching covers:", error);
+      }
+    };
+
+    fetchData();
+
+
   }, []);
 
-  const getUser = () => {};
+
+  const onClaim = async (i,item) => {
+    const userCover = await findCover(userdata[i].protocol)
+    console.log('testtt',userCover)
+    navigate('/SubmitClaim', { state: { userdata: item, walletAddress: walletAddress,userCover:userCover } })
+  }
+  const findCover = async (protocol) => {
+
+    for (const item of covers) {
+
+      console.log('huhh', item.protocol)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+      console.log(protocol)
+      if (item.protocol == protocol) {
+        return item;
+      }
+    }
+
+
+    return false;
+  }
+
+
+
+  const getUser = () => { };
   return (
     <>
       <div className="w-full bg-[#242324]  shadow flex-col justify-start items-center gap-[150px] inline-flex background container-snap">
@@ -75,7 +121,7 @@ export default function UserHome() {
             <div className="justify-start items-start gap-[60px] flex">
               <div className="w-[45px] h-7 justify-center items-center flex">
                 <div className="w-[45px] text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Home
+                  Home  
                 </div>
               </div>
               <div className="justify-center items-center flex">
@@ -170,8 +216,8 @@ export default function UserHome() {
                 Actions
               </div>
             </div>
-              {userdata.map((item, index) => (
-            <div className="w-[1289px] h-[67px] relative bg-white bg-opacity-10 rounded-[15px] border border-white border-opacity-25">
+            {userdata.map((item, index) => (
+              <div className="w-[1289px] h-[67px] relative bg-white bg-opacity-10 rounded-[15px] border border-white border-opacity-25">
                 <div key={index}>
                   <div className="left-[45px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
                     {item.protocol}
@@ -185,31 +231,34 @@ export default function UserHome() {
                     </span>
                   </div>
                   <div className="left-[446px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                  {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-2)}
+                    {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-2)}
                   </div>
                   <div className="left-[700px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
                     {item.days} days
                   </div>
-                  
+
                   <div className="w-[100px] px-[18px] py-[9px] left-[935px] top-[11px] absolute bg-gradient-to-r from-purple-600 to-cyan-400 rounded-xl justify-center items-center gap-2.5 inline-flex">
                     <div className="text-center text-white text-lg font-bold font-Satoshi">
                       Active
                     </div>
                   </div>
                   <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
-                    <div className="w-[30px] h-[30px] relative"></div>
-                    <div className="w-[30px] h-[30px] relative" />
+                    <div className="w-[30px] h-[30px] relative cursor-pointer"><img src={images.trashcan} /></div>
+                    <div className="w-[30px] h-[30px] relative cursor-pointer"
+                      onClick={()=>{
+                        onClaim(index,item)
+                      }}><img src={images.clipboard} /></div>
                   </div>
                 </div>
-            </div>
-              ))}
+              </div>
+            ))}
           </div>
-          
-        :
-        <div className="  font-Satoshi text-white text-3xl font-bold">You haven't covered your crypto assets!</div>
-        }
+
+            :
+            <div className="  font-Satoshi text-white text-3xl font-bold">You haven't covered your crypto assets!</div>
+          }
         </div>
-        <div className="w-[1295px] py-5 border-t border-neutral-700 justify-between items-center inline-flex">
+        <div className="w-[1295px] py-5 border-t border-neutral-700 justify-between items-center inline-flex mt-44">
           <div className="w-[334px] h-[27px] relative">
             <div className="w-[17px] left-0 top-[-0.42px] absolute text-slate-500 text-base font-normal font-Satoshi leading-7">
               ©
