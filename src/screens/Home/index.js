@@ -19,12 +19,12 @@ export default function Home() {
   console.log(data2);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [adminLoginModal, setAdminLoginModal] = useState(false);
 
   const { addresses,setAddresses } = useAuth();
 
   // const [activeScreen, setactiveScreen] = useState("Home");
   const [walletAddress, setWalletAddress] = useState("");
-  const [adminLoginModal, setAdminLoginModal] = useState(false);
   // const reduxWalletAddress = useSelector(selectWalletAddress)
   const [walletConnected, setWalletConnected] = useState(false);
   const navigate = useNavigate();
@@ -177,13 +177,13 @@ export default function Home() {
           <div className="justify-start items-center gap-14 flex">
             <div className="justify-start items-start gap-[60px] flex">
               <div className="w-[45px] h-7 justify-center items-center flex">
-                <div className="w-[45px] text-center text-white text-[17px] font-normal font-Satoshi leading-7">
+                <div className="cursor-pointer w-[45px] text-center text-white text-[17px] font-normal font-Satoshi leading-7">
                   Home
                 </div>
               </div>
               <div className="justify-center items-center flex">
                 <div className="self-stretch justify-start items-center inline-flex">
-                  <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
+                  <div className="cursor-pointer text-center text-white text-[17px] font-normal font-Satoshi leading-7">
                     Covers
                   </div>
                   <div className="w-6 h-6 relative">
@@ -192,17 +192,21 @@ export default function Home() {
                 </div>
               </div>
               <div className="justify-center items-center flex">
-                <div className="text-center text-white text-lg font-normal font-Satoshi leading-7">
+                <div className="cursor-pointer text-center text-white text-lg font-normal font-Satoshi leading-7"
+                onClick={() => {
+                  navigate("/AboutUs");
+                }}
+                >
                   About
                 </div>
               </div>
               <div className="justify-center items-center flex">
-                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
+                <div className="cursor-pointer text-center text-white text-[17px] font-normal font-Satoshi leading-7">
                   Community Claims
                 </div>
               </div>
               <div className="justify-center items-center flex">
-                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
+                <div className="cursor-pointer text-center text-white text-[17px] font-normal font-Satoshi leading-7">
                   Data
                 </div>
               </div>

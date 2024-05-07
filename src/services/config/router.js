@@ -10,6 +10,7 @@ import BuyCovers from "../../screens/BuyCovers";
 import CoverPurchase from "../../screens/CoverPurchase";
 import SubmitClaim from "../../screens/SubmitClaim";
 import ClaimAssessments from "../../screens/ClaimAssessment";
+import AboutUs from "../../screens/AboutUs/AboutUs";
 
 const router = createBrowserRouter([
     {
@@ -51,7 +52,11 @@ const router = createBrowserRouter([
             {
                 path:"/ClaimAssessments",
                 element:<ClaimAssessments/>
-            }
+            },
+            {
+                path:"/AboutUs",
+                element:<AboutUs/>
+            },
         ]
     },
 ])
