@@ -33,7 +33,7 @@ export default function CoverPurchase() {
   
   const validate = () => {
     if (!checkbox) {
-        seterror('Checkbox must be checked.');
+        seterror('Please agree to the terms and conditions.');
         return;
     }
     
