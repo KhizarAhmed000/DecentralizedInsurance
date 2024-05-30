@@ -39,7 +39,7 @@ export default function CoverPurchase() {
     
     for (const item of newArray) {
         if (item.days == null || item.amount == null) {
-            seterror('Days and amount values must not be null.');
+            seterror('Please fill required fields.');
             return;
         }
     }
@@ -86,6 +86,7 @@ const calculateTotalCost = () => {
     fetch(`${backendUrl}user/createUser`, requestOptions)
       .then((response) => response.text())
       .then((result) => {
+        //NAVIGATING FROM HERE
         navigate('/UserHome')
       })
       .catch((error) => console.log("error", error));
