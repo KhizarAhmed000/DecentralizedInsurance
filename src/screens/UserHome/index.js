@@ -7,15 +7,21 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-modal";
 import backendUrl from "../../services/backendurl";
-import { Indexed } from "ethers";
+import { Indexed, hexlify } from "ethers";
 export default function UserHome() {
   const walletAddress = useSelector(selectWalletAddress);
   // console.log("dasda  ", walletAddress);
   const navigate = useNavigate();
   const [userdata, setData] = useState([]);
   const [covers, setCovers] = useState();
-  const [modalOpen, setmodalOpen] = useState(false)
-  const [cancellationIndex, setcancellationIndex] = useState(0)
+  const [modalOpen, setmodalOpen] = useState(false);
+  const [cancellationIndex, setcancellationIndex] = useState(0);
+  const [cancellationData, setCancellationData] = useState({
+    protocol: '',
+    imageURL: '',
+    coverType: '',
+    amount: 0,
+  });
   const CoverData = [
     {
       title: "Active Cover Amount",
@@ -107,8 +113,7 @@ export default function UserHome() {
   };
   const findCover = async (protocol) => {
     for (const item of covers) {
-      console.log("huhh", item.protocol);
-      console.log(protocol);
+
       if (item.protocol == protocol) {
         return item;
       }
@@ -116,12 +121,21 @@ export default function UserHome() {
 
     return false;
   };
-
-  const handleModal=(index)=>{
-    setmodalOpen(true)
-    setcancellationIndex(index)
-    console.log(userdata[cancellationIndex])
+  const handleCancellationData = async (index)=>{
+    console.log(userdata[index]);
+    const userCover = await findCover(userdata[index].protocol);
+    setCancellationData({
+      protocol: userCover.protocol,
+      imageURL: userCover.imageURL,
+      coverType: userCover.coverType,
+      amount: userdata[index].amount,
+    })
+    
   }
+  const handleModal = async (index) => {
+    setmodalOpen(true);
+    handleCancellationData(index)
+  };
 
   const getCoverRemainingTime = (index) => {
     const objectId = userdata[index]._id;
@@ -295,12 +309,12 @@ export default function UserHome() {
                         </div>
                       </div>
                     )}
-
+                    {getCoverRemainingTime(index) !== 0 ?
                     <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
                       <div
                         className="w-[30px] h-[30px] relative cursor-pointer"
                         onClick={() => {
-                          handleModal(index)
+                          handleModal(index);
                         }}
                       >
                         <img src={images.trashcan} />
@@ -313,7 +327,20 @@ export default function UserHome() {
                       >
                         <img src={images.clipboard} />
                       </div>
+                    </div> :
+                    <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
+                    <div
+                      className="w-[30px] h-[30px] relative cursor-pointer"
+                      onClick={() => {
+                        //delete cover
+                      }}
+                    >
+                      <img src={images.trashcan} />
                     </div>
+                    
+                  </div>
+
+                    }
                   </div>
                 </div>
               ))}
@@ -365,27 +392,28 @@ export default function UserHome() {
         </div>
       </div>
 
-      <Modal style={customStyles} isOpen={modalOpen}>
+      <Modal style={customStyles} isOpen={modalOpen} ariaHideApp={false}>
         <div className="w-[694px] h-[434px] p-[25px] bg-neutral-800 rounded-[20px] flex-col justify-start items-center gap-[50px] inline-flex">
+          
           <div className="self-stretch h-[284px] flex-col justify-start gap-[25px] flex">
             <div className="text-center text-white text-[32px] font-bold font-Satoshi tracking-wide">
-              Cancel Claim
+              Cancel Cover Insurance
             </div>
             <div className="flex-col justify-start gap-[15px] flex">
               <div className="h-[99px] p-[25px] bg-black/opacity-20 rounded-[20px] border border-white/opacity-25 backdrop-blur-[25px] flex-col justify-center items-center gap-[15px] flex">
                 <div className="self-stretch h-[49px] justify-start items-start gap-2.5 inline-flex">
                   <img
                     className="w-12 h-12"
-                    src="https://via.placeholder.com/48x48"
+                    src={cancellationData.imageURL}
                   />
                   <div className="grow shrink basis-0 flex-col justify-center items-start gap-[5px] inline-flex">
                     <div className="text-white text-[22px] font-medium font-Satoshi leading-tight">
-                      Extra Finance
+                      {cancellationData.protocol}
                     </div>
                     <div className="px-1 py-0.5 justify-center items-center gap-2.5 inline-flex">
                       <div className="w-[15.50px] h-[19.50px] relative"></div>
                       <div className="text-white text-sm font-normal font-Satoshi leading-tight">
-                        Smart Contract Vulnerability
+                        {cancellationData.coverType}
                       </div>
                     </div>
                   </div>
@@ -393,26 +421,17 @@ export default function UserHome() {
                     <div className="text-white text-xl font-bold font-Satoshi leading-tight">
                       23 ETH
                     </div>
-                    <div className="text-white text-xl font-bold font-Satoshi leading-tight">
-                      
-                    </div>
+                    <div className="text-white text-xl font-bold font-Satoshi leading-tight"></div>
                   </div>
                 </div>
               </div>
-              <div className="self-stretch px-2.5 justify-between items-center inline-flex">
-                <div className="text-white text-lg font-normal font-Satoshi capitalize">
-                  Claim ID
-                </div>
-                <div className="text-white text-xl font-bold font-Satoshi leading-tight">
-                  12
-                </div>
-              </div>
+            
               <div className="self-stretch px-2.5 justify-between items-center inline-flex">
                 <div className="text-white text-lg font-normal font-Satoshi capitalize">
                   Claim Amount
                 </div>
                 <div className="text-white text-xl font-bold font-Satoshi leading-tight">
-                  3.14531 ETH
+                  {cancellationData.amount}
                 </div>
               </div>
               <div className="self-stretch px-2.5 justify-between items-center inline-flex">
@@ -420,18 +439,24 @@ export default function UserHome() {
                   Amount to be recieved{" "}
                 </div>
                 <div className="text-white text-xl font-bold font-Satoshi leading-tight">
-                  3.14531 ETH
+                  {cancellationData.amount}
                 </div>
               </div>
             </div>
           </div>
-          <div
-            className="px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex cursor-pointer"
-          
-          >
+          <div className="flex ">
+          <div className=" mr-2 px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex cursor-pointer">
             <div className="text-center text-black text-xl font-bold font-Satoshi capitalize leading-tight">
               Confirm
             </div>
+          </div>
+          <div className="px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex cursor-pointer">
+            <div className="text-center text-black text-xl font-bold font-Satoshi capitalize leading-tight"
+            onClick={()=>{setmodalOpen(false)}}
+            >
+              Cancel
+            </div>
+          </div>
           </div>
         </div>
       </Modal>
