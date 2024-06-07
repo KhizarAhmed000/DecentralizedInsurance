@@ -113,7 +113,7 @@ export default function AdminCovers() {
         </div>
 
         <div className="w-[1295px]  flex-col justify-start items-start gap-[75px] inline-flex">
-          <div className="text-center text-white text-5xl font-bold fontSatoshi">
+          <div className="text-center text-white text-5xl font-bold font-Satoshi">
             Covers
           </div>
           <div className="flex-col justify-start items-start gap-[35px] flex">
@@ -123,14 +123,14 @@ export default function AdminCovers() {
                   <div className="w-6 h-6 relative">
                     <div className="w-[19px] h-[19px] left-[2px] top-[2px] absolute rounded-full border border-white" />
                   </div>
-                  <div className="text-gray-200 text-xl font-medium fontSatoshi leading-7 tracking-tight">
+                  <div className="text-gray-200 text-xl font-medium font-Satoshi leading-7 tracking-tight">
                     Search
                   </div>
                 </div>
               </div> */}
               <div className="px-7 py-3 bg-teal-600 rounded-[36px] justify-end items-start gap-2.5 flex">
                 <div
-                  className="text-center text-black text-lg font-medium fontSatoshi capitalize leading-tight cursor-pointer"
+                  className="text-center text-black text-lg font-medium font-Satoshi capitalize leading-tight cursor-pointer"
                   onClick={() => {
                     navigate("/AdminAddCover");
                   }}
@@ -141,13 +141,13 @@ export default function AdminCovers() {
             </div>
             <div className="self-stretch justify-start items-start gap-[19px] inline-flex">
               {/* <div className="px-5 py-2.5 bg-teal-600 rounded-[10px] justify-start items-center gap-[23px] flex cursor-pointer">
-                <div className="text-black text-xl font-medium fontSatoshi leading-[27.10px]">
+                <div className="text-black text-xl font-medium font-Satoshi leading-[27.10px]">
                   MPC Cover
                 </div>
               </div> */}
 
               {/* <div className="px-5 py-2.5 bg-white bg-opacity-20 rounded-[10px] justify-start items-center gap-[23px] flex">
-                <div className="text-gray-200 text-xl font-medium fontSatoshi leading-[27.10px]">
+                <div className="text-gray-200 text-xl font-medium font-Satoshi leading-[27.10px]">
                   Ethereum Slashing
                 </div>
               </div> */}
@@ -162,7 +162,7 @@ export default function AdminCovers() {
                   <div
                     className={`text-${
                       value ? "black" : "gray-200"
-                    } text-xl font-medium fontSatoshi leading-[27.10px]`}
+                    } text-xl font-medium font-Satoshi leading-[27.10px]`}
                   >
                     {type}
                   </div>
@@ -192,12 +192,12 @@ export default function AdminCovers() {
                           alt={item.name}
                         />
                         <div className="grow shrink basis-0 flex-col justify-center items-start gap-[5px] inline-flex">
-                          <div className="text-white text-[22px] font-medium fontSatoshi leading-tight">
+                          <div className="text-white text-[22px] font-medium font-Satoshi leading-tight">
                             {item.protocol}
                           </div>
                           <div className="px-1 py-0.5 justify-center items-center gap-2.5 inline-flex">
                             <div className="w-[15.50px] h-[19.50px] relative"></div>
-                            <div className="text-white text-sm font-normal fontSatoshi leading-tight">
+                            <div className="text-white text-sm font-normal font-Satoshi leading-tight">
                               {item.coverType}
                             </div>
                           </div>
@@ -205,33 +205,33 @@ export default function AdminCovers() {
                       </div>
                       <div className="self-stretch h-[152px] flex-col justify-center items-center gap-2.5 flex">
                         <div className="self-stretch justify-between items-center inline-flex">
-                          <div className="text-white text-base font-normal fontSatoshi capitalize">
+                          <div className="text-white text-base font-normal font-Satoshi capitalize">
                             Capacity
                           </div>
-                          <div className="text-white text-xl font-bold fontSatoshi leading-tight">
+                          <div className="text-white text-xl font-bold font-Satoshi leading-tight">
                             ~ {item.capacity} USD
                           </div>
                         </div>
                         <div className="self-stretch justify-between items-center inline-flex">
-                          <div className="text-white text-base font-normal fontSatoshi capitalize">
+                          <div className="text-white text-base font-normal font-Satoshi capitalize">
                             daily Cost
                           </div>
-                          <div className="text-white text-xl font-bold fontSatoshi leading-tight">
+                          <div className="text-white text-xl font-bold font-Satoshi leading-tight">
                             {item.dailyCost}%
                           </div>
                         </div>
                         <div className="self-stretch justify-between items-center inline-flex">
-                          <div className="text-white text-base font-normal fontSatoshi capitalize">
+                          <div className="text-white text-base font-normal font-Satoshi capitalize">
                             Security Rating
                           </div>
-                          <div className="text-teal-600 text-xl font-bold fontSatoshi leading-tight">
+                          <div className="text-teal-600 text-xl font-bold font-Satoshi leading-tight">
                             {item.securityRating}
                           </div>
                         </div>
                       </div>
                       <div className="px-[25px] py-3 rounded-[52px] border border-white justify-center items-center gap-2.5 inline-flex">
                         <div
-                          className="text-white text-lg font-medium fontSatoshi leading-tight cursor-pointer"
+                          className="text-white text-lg font-medium font-Satoshi leading-tight cursor-pointer"
                           onClick={() => {
                             handleEditNavigate(item);
                           }}
