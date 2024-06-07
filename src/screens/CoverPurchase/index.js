@@ -15,17 +15,69 @@ export default function CoverPurchase() {
   const cartCovers = useSelector(selectCartCovers);
   const [days, setDays] = useState();
   const [walletBalance, setWalletBalance] = useState();
+  const [checkbox,setCheckbox] = useState();
+  const [error, seterror] = useState("validated")
+  const [totalCost,settotalCost] = useState(0)
   console.log(cartCovers);
   console.log("dasda  ", walletAddress);
   const navigate = useNavigate();
 
-  const newArray = cartCovers.map((item) => ({
-    protocol: item.protocol,
-    address: null,
-    amount: null,
-    days: null,
-  }));
-  console.log(newArray);
+  // this is creating an array with the data for the transaction seeing how many covers there r in the cart
+  const initializeArray = () => {
+    return cartCovers.map((item) => ({
+      protocol: item.protocol,
+      address: null,
+      amount: null,
+      days: null,
+      dailyCost: item.dailyCost,
+    }));
+  };
+  const [newArray, setNewArray] = useState(initializeArray);
+  
+  const validate = () => {
+    if (!checkbox) {
+        seterror('Please agree to the terms and conditions.');
+        return;
+    }
+    
+    for (const item of newArray) {
+        if (item.days === null || item.amount === null) {
+            seterror('Days and amount values must not be null.');
+            console.log(item.days,item.amount)
+            return;
+        }
+    }
+//RUN FUNCTIONS HERE IN THE EVENT OF SUCCESSFUL USER INPUT
+    seterror('validated');
+    createUser()
+};
+
+const calculateTotalCost = () => {
+  let totalCost = 0;
+
+  // Check if any item in cartCovers has null values for days or amount
+  const hasNullValues = newArray.some((item) => item.days == null || item.amount == null);
+  if (hasNullValues) {
+      return totalCost; // Return 0 if any item has null values
+  }
+
+  // Calculate total cost if all items have valid days and amount
+  newArray.forEach((item) => {
+      const itemCost = item.dailyCost * item.days * item.amount;
+      console.log(itemCost)
+      totalCost += itemCost;
+  });
+  console.log(totalCost)
+  settotalCost(totalCost)
+};
+
+const handleChange = (event, index, field) => {
+  const value = event.target.value;
+  const updatedArray = [...newArray];
+  updatedArray[index][field] = value;
+  setNewArray(updatedArray);
+  calculateTotalCost();
+};
 
   const createUser = () => {
     var myHeaders = new Headers();
@@ -171,9 +223,10 @@ export default function CoverPurchase() {
                           className="text-zinc-400 text-xl font-medium font-Satoshi leading-[27.10px]"
                           placeholder="Enter Address"
                           value={walletAddress}
-                          // onChange={(event) =>
-                          //   (newArray[index].address = event.target.value)
-                          // }
+                          onChange={(event) =>{
+                            newArray[index].address = event.target.value
+                            calculateTotalCost()
+                          }}
                         />
                       </div>
                     </div>
@@ -182,9 +235,9 @@ export default function CoverPurchase() {
                         <input
                           className="text-zinc-400 text-xl font-medium font-Satoshi leading-[27.10px]"
                           placeholder="Cover Amount (ETH)"
-                          onChange={(event) =>
-                            (newArray[index].amount = event.target.value)
-                          }
+                          onChange={(event) =>{
+                              handleChange(event,index,'amount')
+                            }}
                         />
                       </div>
                     </div>
@@ -193,7 +246,9 @@ export default function CoverPurchase() {
                         <input
                           className="text-zinc-400 text-xl font-medium font-Satoshi leading-[27.10px]"
                           onChange={(event) =>
-                            (newArray[index].days = event.target.value)
+                            {
+                              handleChange(event,index,'days')
+                            }
                           }
                         />
                       </div>
@@ -247,7 +302,7 @@ export default function CoverPurchase() {
                     Cover Payment
                   </div>
                   <div className="text-teal-600 text-xl font-bold font-Satoshi leading-tight">
-                    0.0000 ETH
+                    {totalCost} ETH
                   </div>
                 </div>
                 <div className="self-stretch justify-between items-center inline-flex">
@@ -269,9 +324,7 @@ export default function CoverPurchase() {
               <div className="h-[150px] flex-col justify-between items-start inline-flex">
                 <div className="flex-col justify-start items-start gap-2.5 flex">
                   <div className="w-[462px] text-white text-base font-normal font-Satoshi capitalize">
-                    Please ensure you have read and understood the following
-                    documents and any terms and conditions set out and
-                    identified by them:
+                    Please ensure you have read the terms and conditions and understand the scope of the following risk:
                   </div>
                   <div className="px-1 py-0.5 justify-center items-center gap-2.5 inline-flex">
                     <div className="w-[15.50px] h-[19.50px] relative"></div>
@@ -279,21 +332,30 @@ export default function CoverPurchase() {
                       Smart Contract Vulnerability
                     </div>
                   </div>
+                  <div className="w-[462px] text-red-600 font-normal font-Satoshi capitalize">
+                    {error == "validated" ? "" : error}
+                  </div>
                 </div>
                 <div className="justify-start items-start gap-2.5 inline-flex">
-                  <div className="w-[19px] h-[19px] bg-zinc-300 bg-opacity-0 rounded-[1px] border border-white" />
+                  
+                  <input className="w-[19px] h-[19px] bg-zinc-300 bg-opacity-0 rounded-[1px] border border-white"
+                   type="checkbox" id="checkbox1" onClick={(event)=>{
+                    setCheckbox(event.target.checked)
+                   }}></input>
                   <div className="text-white text-sm font-normal font-Satoshi leading-tight">
-                    I agree to the terms and conditions set out and identified
-                    by the above documents.
+                    I agree to the terms and conditions and understand the scope of the risk
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="px-[35px] py-[15px] bg-gradient-to-r from-purple-600 to-cyan-400 rounded-[36px] justify-start items-start gap-2.5 inline-flex">
+          <div className="px-[35px] py-[15px] bg-gradient-to-r from-purple-600 to-cyan-400 rounded-[36px] cursor-pointer justify-start items-start gap-2.5 inline-flex"
+          onClick={()=>{
+            validate()
+          }}
+          >
             <div
-              className="text-center text-white text-2xl font-bold font-Satoshi capitalize leading-tight"
-              onClick={createUser}
+              className="text-center text-white text-2xl font-bold font-Satoshi capitalize leading-tight "
             >
               Confirm
             </div>
