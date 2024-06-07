@@ -98,6 +98,7 @@ const handleChange = (event, index, field) => {
     fetch(`${backendUrl}user/createUser`, requestOptions)
       .then((response) => response.text())
       .then((result) => {
+        //NAVIGATING FROM HERE
         navigate('/UserHome')
       })
       .catch((error) => console.log("error", error));

@@ -120,7 +120,7 @@ export default function UserHome() {
   const handleModal=(index)=>{
     setmodalOpen(true)
     setcancellationIndex(index)
-    console.log(modalOpen)
+    console.log(userdata[cancellationIndex])
   }
 
   const getCoverRemainingTime = (index) => {
@@ -427,7 +427,7 @@ export default function UserHome() {
           </div>
           <div
             className="px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex cursor-pointer"
-            onClick={getCoverRemainingTime}
+          
           >
             <div className="text-center text-black text-xl font-bold font-Satoshi capitalize leading-tight">
               Confirm
