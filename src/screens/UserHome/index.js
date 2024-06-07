@@ -69,15 +69,13 @@ export default function UserHome() {
     };
 
     fetch(`${backendUrl}user/getUser`, requestOptions)
-      .then((response) => response.json()) // Parse the response as JSON
+      .then((response) => response.json()) 
       .then((data) => {
-        // console.log(data); // Log the full data
 
-        // Access the transactions array
         const transactions = data.user.transactions;
         const walletAddress = data.user.walletAddress;
         console.log("test", walletAddress);
-        console.log(transactions); // Log the transactions
+        console.log(transactions); 
         setData(transactions);
         console.log("dataaaaaaaaaaaaa", userdata[0]);
       })
@@ -100,6 +98,7 @@ export default function UserHome() {
     fetchData();
   }, []);
 
+
   const onClaim = async (i, item) => {
     const userCover = await findCover(userdata[i].protocol);
     console.log("testtt", userCover);
@@ -121,21 +120,34 @@ export default function UserHome() {
 
     return false;
   };
-  const handleCancellationData = async (index)=>{
-    console.log(userdata[index]);
+  const handleCancellationData = async (index) => {
+    console.log(covers);
+    const getDailyCostByProtocol = (protocol) => {
+      const cover = covers.find(item => item.protocol === protocol);
+      return cover ? cover.dailyCost : null;
+    };
+
+    
     const userCover = await findCover(userdata[index].protocol);
+    const dailyCost = getDailyCostByProtocol(userdata[index].protocol);
     setCancellationData({
       protocol: userCover.protocol,
       imageURL: userCover.imageURL,
       coverType: userCover.coverType,
       amount: userdata[index].amount,
+      dailyCost,
+      days: userdata[index].days,
     })
-    
+    console.log(cancellationData)
   }
   const handleModal = async (index) => {
     setmodalOpen(true);
     handleCancellationData(index)
   };
+  const calculateCancellationMoney = async ()=>{
+    return (cancellationData.amount * cancellationData.dailyCost * cancellationData.days) * 0.95
+  }
+
 
   const getCoverRemainingTime = (index) => {
     const objectId = userdata[index]._id;
@@ -161,6 +173,10 @@ export default function UserHome() {
     const timestampInt = parseInt(timestampHex, 16);
     return new Date(timestampInt * 1000);
   };
+
+  const handleCancellation = async ()=>{
+    const cancellationMoney = (cancellationData.amount * cancellationData.dailyCost * cancellationData.days) * 0.95
+  }
 
   return (
     <>
@@ -310,35 +326,35 @@ export default function UserHome() {
                       </div>
                     )}
                     {getCoverRemainingTime(index) !== 0 ?
-                    <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
-                      <div
-                        className="w-[30px] h-[30px] relative cursor-pointer"
-                        onClick={() => {
-                          handleModal(index);
-                        }}
-                      >
-                        <img src={images.trashcan} />
+                      <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
+                        <div
+                          className="w-[30px] h-[30px] relative cursor-pointer"
+                          onClick={() => {
+                            handleModal(index);
+                          }}
+                        >
+                          <img src={images.trashcan} />
+                        </div>
+                        <div
+                          className="w-[30px] h-[30px] relative cursor-pointer"
+                          onClick={() => {
+                            onClaim(index, item);
+                          }}
+                        >
+                          <img src={images.clipboard} />
+                        </div>
+                      </div> :
+                      <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
+                        <div
+                          className="w-[30px] h-[30px] relative cursor-pointer"
+                          onClick={() => {
+                            //delete cover
+                          }}
+                        >
+                          <img src={images.trashcan} />
+                        </div>
+
                       </div>
-                      <div
-                        className="w-[30px] h-[30px] relative cursor-pointer"
-                        onClick={() => {
-                          onClaim(index, item);
-                        }}
-                      >
-                        <img src={images.clipboard} />
-                      </div>
-                    </div> :
-                    <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
-                    <div
-                      className="w-[30px] h-[30px] relative cursor-pointer"
-                      onClick={() => {
-                        //delete cover
-                      }}
-                    >
-                      <img src={images.trashcan} />
-                    </div>
-                    
-                  </div>
 
                     }
                   </div>
@@ -394,7 +410,7 @@ export default function UserHome() {
 
       <Modal style={customStyles} isOpen={modalOpen} ariaHideApp={false}>
         <div className="w-[694px] h-[434px] p-[25px] bg-neutral-800 rounded-[20px] flex-col justify-start items-center gap-[50px] inline-flex">
-          
+
           <div className="self-stretch h-[284px] flex-col justify-start gap-[25px] flex">
             <div className="text-center text-white text-[32px] font-bold font-Satoshi tracking-wide">
               Cancel Cover Insurance
@@ -418,20 +434,26 @@ export default function UserHome() {
                     </div>
                   </div>
                   <div className="flex-col justify-start items-end gap-2.5 inline-flex">
-                    <div className="text-white text-xl font-bold font-Satoshi leading-tight">
-                      23 ETH
-                    </div>
+                    
                     <div className="text-white text-xl font-bold font-Satoshi leading-tight"></div>
                   </div>
                 </div>
               </div>
-            
+
               <div className="self-stretch px-2.5 justify-between items-center inline-flex">
                 <div className="text-white text-lg font-normal font-Satoshi capitalize">
                   Claim Amount
                 </div>
                 <div className="text-white text-xl font-bold font-Satoshi leading-tight">
-                  {cancellationData.amount}
+                  {cancellationData.amount} ETH
+                </div>
+              </div>
+              <div className="self-stretch px-2.5 justify-between items-center inline-flex">
+                <div className="text-white text-lg font-normal font-Satoshi capitalize">
+                  Amount paid{" "}
+                </div>
+                <div className="text-white text-xl font-bold font-Satoshi leading-tight">
+                  {(cancellationData.amount * cancellationData.dailyCost * cancellationData.days).toString().slice(0, 7)} ETH
                 </div>
               </div>
               <div className="self-stretch px-2.5 justify-between items-center inline-flex">
@@ -439,24 +461,26 @@ export default function UserHome() {
                   Amount to be recieved{" "}
                 </div>
                 <div className="text-white text-xl font-bold font-Satoshi leading-tight">
-                  {cancellationData.amount}
+                  {((cancellationData.amount * cancellationData.dailyCost * cancellationData.days) * 0.95).toString().slice(0, 7)} ETH
                 </div>
               </div>
             </div>
           </div>
           <div className="flex ">
-          <div className=" mr-2 px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex cursor-pointer">
-            <div className="text-center text-black text-xl font-bold font-Satoshi capitalize leading-tight">
-              Confirm
+            <div className=" mr-2 px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex cursor-pointer">
+              <div className="text-center text-black text-xl font-bold font-Satoshi capitalize leading-tight"
+              onClick={handleCancellation}
+              >
+                Confirm
+              </div>
             </div>
-          </div>
-          <div className="px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex cursor-pointer">
-            <div className="text-center text-black text-xl font-bold font-Satoshi capitalize leading-tight"
-            onClick={()=>{setmodalOpen(false)}}
-            >
-              Cancel
+            <div className="px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex cursor-pointer">
+              <div className="text-center text-black text-xl font-bold font-Satoshi capitalize leading-tight"
+                onClick={() => { setmodalOpen(false) }}
+              >
+                Cancel
+              </div>
             </div>
-          </div>
           </div>
         </div>
       </Modal>

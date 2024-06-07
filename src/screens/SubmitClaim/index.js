@@ -19,60 +19,68 @@ export default function SubmitClaim() {
     const userdata = state?.userdata;
     const walletAddress = state?.walletAddress;
     const userCover = state?.userCover
-    const [lossTime, setLossTime] = useState('');
-    const [lossAmount, setLossAmount] = useState(0);
-    const [claimAmount, setClaimAmount] = useState(0);
-    const [description, setDescription] = useState('');
+    const [lossTime, setLossTime] = useState();
+    const [lossAmount, setLossAmount] = useState();
+    const [description, setDescription] = useState();
+    const [error, seterror] = useState()
 
     useEffect(() => {
         console.log(userdata)
     }, [userdata])
 
     const handleCreateClaim = () => {
-        // const body = {
-        //     protocol: userCover.protocol,
-        //     coverType: userCover.coverType,
-        //     ownderAddress: walletAddress,
-        //     coverAmount: userdata.amount,
-        //     coverPeriod: userdata.days,
-        //     lossTime,
-        //     lossAmount: parseInt(lossAmount),
-        //     claimAmount: parseInt(claimAmount),
-        //     description,
-        // }
-        // console.log(body)
-        // const response = createClaim(body)
-        // console.log(response)
 
+        
 
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
 
-        const raw = JSON.stringify({
-            protocol: userCover.protocol,
-            coverType: userCover.coverType,
-            ownderAddress: walletAddress,
-            coverAmount: userdata.amount,
-            coverPeriod: userdata.days,
-            lossTime,
-            lossAmount: parseInt(lossAmount),
-            claimAmount: parseInt(claimAmount),
-            description,
-        });
-        console.log('this is body',raw)
-        const requestOptions = {
-            method: "POST",
-            headers: myHeaders,
-            body: raw,
-            redirect: "follow"
-        };
+            const raw = JSON.stringify({
+                protocol: userCover.protocol,
+                coverType: userCover.coverType,
+                ownerAddress: walletAddress,
+                coverAmount: userdata.amount,
+                coverPeriod: userdata.days,
+                lossTime,
+                lossAmount: parseInt(lossAmount),
+                description,
+            });
+            console.log('this is body', raw)
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+            };
 
-        fetch(`${backendUrl}claim/createClaim`, requestOptions)
-            .then((response) => response.text())
-            .then((result) => console.log(result))
-            .catch((error) => console.error(error));
+            fetch(`${backendUrl}claim/createClaim`, requestOptions)
+                .then((response) => response.text())
+                .then((result) => {
+                        navigate("/ClaimAssessments");                    
+                })
+                .catch((error) => console.log(error));
+        
     }
 
+    const validateFields = () => {
+
+        if (description===null) {
+            seterror('Description is required.');
+            return false
+        }
+        if (lossAmount===null) {
+            seterror('Loss amount is required.');
+            return false
+        }
+        if (lossTime===null) {
+            seterror('Loss time is required.');
+            return false
+        }
+
+        seterror("validated");
+        handleCreateClaim()
+        return true
+    };
 
     return (
         <>
@@ -186,13 +194,7 @@ export default function SubmitClaim() {
                                     <div className="text-white text-xl font-bold font-Satoshi leading-tight">
                                         <input className="p-1 rounded-l" type="number" onChange={(event) => { setLossAmount(event.target.value) }} /></div>
                                 </div>
-                                <div className="self-stretch justify-between items-center inline-flex">
-                                    <div className="text-white text-lg font-normal font-Satoshi capitalize">Claim Amount</div>
-                                    <div className="text-white text-xl font-bold font-Satoshi leading-tight">
-                                        <input className="p-1 rounded-l" type="number"
-                                            onChange={(event) => { setClaimAmount(event.target.value) }}
-                                        /></div>
-                                </div>
+
                                 <div className="self-stretch grow shrink basis-0 flex-col justify-center items-start gap-2.5 flex">
                                     <div className="text-white text-lg font-normal font-Satoshi capitalize">Description (Details provided here will be made public)</div>
                                     <div className="self-stretch grow shrink basis-0 flex-col justify-start items-start gap-2.5 flex">
@@ -208,27 +210,21 @@ export default function SubmitClaim() {
                     </div>
 
 
-                    <div className="w-[634px] h-[286px] flex-col justify-end items-end gap-5 inline-flex relative left-[340px]">
+                    <div className="w-[634px] h-[136px] flex-col justify-end items-end gap-5 inline-flex relative left-[340px]">
                         <div className="self-stretch px-2.5 justify-start items-start gap-2.5 inline-flex">
                             <div className="grow shrink basis-0 text-white text-base font-normal font-Satoshi lowercase">Please send confidential information and supporting documents of proof of loss<br />to claims@dInsurance.com</div>
+
+
+                            
                         </div>
-                        <div className="h-[152px]   p-[25px] rounded-[20px] border border-white border-opacity-50 backdrop-blur-[25px] flex-col justify-center items-center gap-[15px] flex">
-                            <div className="self-stretch justify-between items-center inline-flex">
-                                <div className="text-white text-lg font-normal font-Satoshi capitalize mr-10">Fee rate for Claim Application</div>
-                                <div className="text-white text-xl font-bold font-Satoshi leading-tight">0.5%</div>
-                            </div>
-                            <div className="self-stretch justify-between items-center inline-flex">
-                                <div className="text-white text-lg font-normal font-Satoshi capitalize">Fees for Claim Application</div>
-                                <div className="text-white text-xl font-bold font-Satoshi leading-tight">0 ETH</div>
-                            </div>
-                            <div className="self-stretch justify-between items-center inline-flex">
-                                <div className="text-white text-lg font-normal font-Satoshi capitalize">Wallet Balance</div>
-                                <div className="text-white text-xl font-bold font-Satoshi leading-tight">12.412 ETH</div>
-                            </div>
-                        </div>
-                        <div className="px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex">
+                        {error !== "validated" &&
+                                <div className="grow shrink basis-0 text-red-500 text-base font-normal font-Satoshi lowercase">{error}</div>
+                            }
+                        <div className=" cursor-pointer px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex"
+                            onClick={validateFields}
+                        >
                             <div className="text-center text-black text-xl font-bold font-Satoshi capitalize leading-tight"
-                                onClick={handleCreateClaim}
+
                             >Confirm</div>
                         </div>
                     </div>

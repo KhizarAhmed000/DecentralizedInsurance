@@ -6,12 +6,17 @@ import { selectWalletAddress } from "../../store/WalletAddress";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import backendUrl from "../../services/backendurl";
+import Modal from "react-modal";
+import Cover from "../../store/Cover";
 export default function ClaimAssessments() {
   const walletAddress = useSelector(selectWalletAddress);
   // console.log("dasda  ", walletAddress);
   const navigate = useNavigate();
   const [userdata, setData] = useState();
   const [claims, setClaims] = useState([''])
+  const [claimAmount, setclaimAmount] = useState(0)
+  const [modalOpen, setmodalOpen] = useState(true)
+  const [claimedIndex, setclaimedIndex] = useState()
   const CoverData = [
     {
       title: "Active Cover Amount",
@@ -31,7 +36,31 @@ export default function ClaimAssessments() {
     // Add more objects as needed
   ];
 
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      backgroundColor: "rgba(0, 0, 0, 0)",
+    },
+  };
+
+  const handleConfirm = ()=>{
+
+//SMART CONTRACT SHIT HERE
+
+    setmodalOpen(false)
+    claims[claimedIndex].claimStatus = "Claimed"
+  }
+
   useEffect(() => {
+      handleGetClaims(); 
+  }, []);
+
+  const handleGetClaims = ()=>{
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
@@ -61,36 +90,54 @@ export default function ClaimAssessments() {
       })
       .catch((error) => console.log("error", error));
 
-       
-    // const handleGetClaims = () => {
-    //     const myHeaders = new Headers();
-    //     myHeaders.append("Content-Type", "application/json");
-      
     const fetchData = async () => {
-        try {
-          const response = await fetch(
-            `${backendUrl}claim/getClaims`
-          );
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response}`);
-          }
-  
-          const result = await response.json();
-          setClaims(result);
-        } catch (error) {
-          console.error("Error fetching claims:", error);
+      try {
+        const response = await fetch(
+          `${backendUrl}claim/getClaims`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response}`);
         }
-      };
-  
-      fetchData();
-  
-    //   handleGetClaims(); 
-  }, []);
+
+        const result = await response.json();
+        setClaims(result);
+      } catch (error) {
+        console.error("Error fetching claims:", error);
+      }
+    };
+
+    fetchData();
+  }
+
+  const deleteClaim = (index) => {
+
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      protocol: claims[index].protocol,
+      ownerAddress:walletAddress
+    });
+    console.log(raw)
+
+    const requestOptions = {
+      method: "DELETE",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+
+    fetch(`${backendUrl}claim/deleteClaim`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        console.log(result)
+        handleGetClaims();
+      })
+      .catch((error) => console.error(error));
+  }
 
 
 
-
-  
   return (
     <>
       <div className="w-full bg-[#242324]  shadow flex-col justify-start items-center gap-[150px] inline-flex background container-snap">
@@ -104,7 +151,7 @@ export default function ClaimAssessments() {
             <div className="justify-start items-start gap-[60px] flex">
               <div className="w-[45px] h-7 justify-center items-center flex">
                 <div className="w-[45px] text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Home  
+                  Home
                 </div>
               </div>
               <div className="justify-center items-center flex">
@@ -177,7 +224,7 @@ export default function ClaimAssessments() {
               </div>
             </div>
           </div>
-           <div className="flex-col justify-start items-center gap-[35px] flex">
+          <div className="flex-col justify-start items-center gap-[35px] flex">
             <div className="self-stretch px-[3px] justify-center items-center gap-[61px] inline-flex">
               <div className="w-[118.22px] text-center text-white text-2xl font-bold font-Satoshi">
                 Protocol
@@ -193,7 +240,7 @@ export default function ClaimAssessments() {
                 Cover Period
               </div>
               <div className="w-[153.05px] text-center text-white text-2xl font-bold font-Satoshi">
-              Claim Status
+                Claim Status
               </div>
               <div className="w-[159.39px] text-center text-white text-2xl font-bold font-Satoshi">
                 Actions
@@ -209,33 +256,48 @@ export default function ClaimAssessments() {
                     <span className="text-white text-lg font-medium font-Satoshi">
                       {item.coverType}{" "}
                     </span>
-                  
+
                   </div>
-                  <div className="left-[446px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                    {item.claimAmount}
+                  <div className="left-[546px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
+                       {item.lossAmount}
                   </div>
                   <div className="left-[700px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                    {item.coverPeriod} 
+                    {item.coverPeriod}
                   </div>
 
-                  <div className="w-[100px] px-[30px] py-[9px] left-[935px] top-[11px] absolute bg-gradient-to-r from-purple-600 to-cyan-400 rounded-xl justify-center items-center gap-2.5 inline-flex">
+                  <div className="w-[100px] px-[30px] py-[9px] left-[890px] top-[11px] absolute bg-gradient-to-r from-purple-600 to-cyan-400 rounded-xl justify-center items-center gap-2.5 inline-flex">
                     <div className="text-center text-white text-lg font-bold font-Satoshi">
                       {item.claimStatus}
                     </div>
                   </div>
+                  {item.claimStatus === "Approved" ? 
+                <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
+                <div className="w-[30px] h-[30px] relative cursor-pointer"><img src={images.arrow} 
+                onClick={()=>{
+                    setclaimAmount(item.lossAmount)
+                    setmodalOpen(true)
+                    setclaimedIndex(index)
+                }}
+                /></div>
+
+              </div>
+                :
+
                   <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
-                    <div className="w-[30px] h-[30px] relative cursor-pointer"><img src={images.trashcan} /></div>
-                    <div className="w-[30px] h-[30px] relative cursor-pointer"
-                      onClick={()=>{
-                        // onClaim(index,item)
-                      }}><img src={images.clipboard} /></div>
+                    <div className="w-[30px] h-[30px] relative cursor-pointer"><img src={images.trashcan} 
+                    onClick={()=>{
+                        deleteClaim(index)
+                    }}
+                    /></div>
+
                   </div>
+                }
                 </div>
               </div>
             ))}
           </div>
 
-          
+
         </div>
         <div className="w-[1295px] py-5 border-t border-neutral-700 justify-between items-center inline-flex mt-44">
           <div className="w-[334px] h-[27px] relative">
@@ -277,6 +339,57 @@ export default function ClaimAssessments() {
           </div>
         </div>
       </div>
+
+      <Modal style={customStyles} isOpen={modalOpen} ariaHideApp={false}>
+        <div className="w-[694px] h-[300px] p-[25px] bg-neutral-800 rounded-[20px] flex-col justify-start items-center gap-[50px] inline-flex">
+
+          <div className="self-stretch h-[284px] flex-col justify-start gap-[25px] flex">
+            <div className="text-center text-white text-[32px] font-bold font-Satoshi tracking-wide">
+              Claim Your Insurance
+            </div>
+            <div className="flex-col justify-start gap-[15px] flex">
+            
+
+              <div className="self-stretch px-2.5 justify-between items-center inline-flex">
+                <div className="text-white text-lg font-normal font-Satoshi capitalize">
+                  Amount to be transferred
+                </div>
+                <div className="text-white text-xl font-bold font-Satoshi leading-tight">
+                  {claimAmount} ETH
+                </div>
+              </div>
+              <div className="self-stretch px-2.5 justify-between items-center inline-flex">
+                <div className="text-white text-lg font-normal font-Satoshi capitalize">
+                  Enter Recieving Address
+                </div>
+                <div className="text-white text-xl font-bold font-Satoshi leading-tight p-2 bg-gray">
+                  <input placeholder="Wallet Address"/>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex ">
+            <div className=" mr-2 px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex cursor-pointer"
+            onClick={handleConfirm}
+            >
+              <div className="text-center text-black text-xl font-bold font-Satoshi capitalize leading-tight"
+              >
+                Confirm
+              </div>
+            </div>
+            <div className="px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex cursor-pointer"
+            onClick={()=>{
+              setmodalOpen(false)
+            }}
+            >
+              <div className="text-center text-black text-xl font-bold font-Satoshi capitalize leading-tight"
+              >
+                Cancel
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 }
