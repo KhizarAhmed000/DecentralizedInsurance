@@ -11,13 +11,15 @@ import { useNavigate } from "react-router-dom";
 import backendUrl from "../../services/backendurl";
 
 export default function CoverPurchase() {
+  //WALLET ADDRESS
   const walletAddress = useSelector(selectWalletAddress);
   const cartCovers = useSelector(selectCartCovers);
   const [days, setDays] = useState();
   const [walletBalance, setWalletBalance] = useState();
-  const [checkbox,setCheckbox] = useState();
+  const [checkbox, setCheckbox] = useState();
   const [error, seterror] = useState("validated")
-  const [totalCost,settotalCost] = useState(0)
+  //COST TO GO TO SMART CONTRACT
+  const [totalCost, settotalCost] = useState(0)
   console.log(cartCovers);
   console.log("dasda  ", walletAddress);
   const navigate = useNavigate();
@@ -33,51 +35,55 @@ export default function CoverPurchase() {
     }));
   };
   const [newArray, setNewArray] = useState(initializeArray);
-  
+
   const validate = () => {
     if (!checkbox) {
-        seterror('Please agree to the terms and conditions.');
-        return;
+      seterror('Please agree to the terms and conditions.');
+      return;
     }
-    
+
     for (const item of newArray) {
-        if (item.days === null || item.amount === null) {
-            seterror('Days and amount values must not be null.');
-            console.log(item.days,item.amount)
-            return;
-        }
+      if (item.days === null || item.amount === null) {
+        seterror('Days and amount values must not be null.');
+        console.log(item.days, item.amount)
+        return;
+      }
     }
-//RUN FUNCTIONS HERE IN THE EVENT OF SUCCESSFUL USER INPUT
+
+
+    //RUN FUNCTIONS HERE IN THE EVENT OF SUCCESSFUL USER INPUT
+
+
     seterror('validated');
     createUser()
-};
+  };
 
-const calculateTotalCost = () => {
-  let totalCost = 0;
+  const calculateTotalCost = () => {
+    let totalCost = 0;
 
-  // Check if any item in cartCovers has null values for days or amount
-  const hasNullValues = newArray.some((item) => item.days == null || item.amount == null);
-  if (hasNullValues) {
+    // Check if any item in cartCovers has null values for days or amount
+    const hasNullValues = newArray.some((item) => item.days == null || item.amount == null);
+    if (hasNullValues) {
       return totalCost; // Return 0 if any item has null values
-  }
+    }
 
-  // Calculate total cost if all items have valid days and amount
-  newArray.forEach((item) => {
+    // Calculate total cost if all items have valid days and amount
+    newArray.forEach((item) => {
       const itemCost = item.dailyCost * item.days * item.amount;
       console.log(itemCost)
       totalCost += itemCost;
-  });
-  console.log(totalCost)
-  settotalCost(totalCost)
-};
+    });
+    console.log(totalCost)
+    settotalCost(totalCost)
+  };
 
-const handleChange = (event, index, field) => {
-  const value = event.target.value;
-  const updatedArray = [...newArray];
-  updatedArray[index][field] = value;
-  setNewArray(updatedArray);
-  calculateTotalCost();
-};
+  const handleChange = (event, index, field) => {
+    const value = event.target.value;
+    const updatedArray = [...newArray];
+    updatedArray[index][field] = value;
+    setNewArray(updatedArray);
+    calculateTotalCost();
+  };
 
   const createUser = () => {
     var myHeaders = new Headers();
@@ -107,7 +113,7 @@ const handleChange = (event, index, field) => {
   return (
     <>
       <div className="w-full bg-[#242324]  shadow flex-col justify-start items-center gap-[150px] inline-flex background">
-        <div className="w-full py-[15px] bg-black bg-opacity-60 justify-center items-center gap-[350px] inline-flex">
+      <div className="w-full py-[15px] bg-black bg-opacity-60 justify-center items-center gap-[350px] inline-flex">
           <div className="w-[200px] h-[46px] pt-[0.50px] pb-[0.83px] justify-center items-center flex">
             <div className="w-[200px] h-[44.67px] relative flex-col justify-start items-start flex">
               <div className="w-[200.06px] h-[44.73px] relative"></div>
@@ -115,7 +121,11 @@ const handleChange = (event, index, field) => {
           </div>
           <div className="justify-start items-center gap-14 flex">
             <div className="justify-start items-start gap-[60px] flex">
-              <div className="w-[45px] h-7 justify-center items-center flex">
+              <div className="w-[45px] h-7 justify-center items-center flex cursor-pointer"
+              onClick={() => {
+                navigate("/UserHome");
+              }}
+              >
                 <div className="w-[45px] text-center text-white text-[17px] font-normal font-Satoshi leading-7">
                   Home
                 </div>
@@ -135,21 +145,16 @@ const handleChange = (event, index, field) => {
                   </div>
                 </div>
               </div>
-              <div className="justify-center items-center flex">
+              <div className="justify-center items-center flex cursor-pointer"
+              onClick={() => {
+                navigate("/ClaimAssessments");
+              }}
+              >
                 <div className="text-center text-white text-lg font-normal font-Satoshi leading-7">
-                  About
+                  Claims
                 </div>
               </div>
-              <div className="justify-center items-center flex">
-                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Community Claims
-                </div>
-              </div>
-              <div className="justify-center items-center flex">
-                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Data
-                </div>
-              </div>
+             
             </div>
             <div className="px-[25px] py-3 bg-white rounded-[36px] justify-start items-center gap-2.5 flex">
               <div className="w-[14.75px] h-6 relative"></div>
@@ -214,7 +219,7 @@ const handleChange = (event, index, field) => {
                           <div className="text-white text-sm font-normal font-Satoshi leading-tight">
                             {item.coverType}
                           </div>
-                          {}
+                          { }
                         </div>
                       </div>
                     </div>
@@ -224,7 +229,7 @@ const handleChange = (event, index, field) => {
                           className="text-zinc-400 text-xl font-medium font-Satoshi leading-[27.10px]"
                           placeholder="Enter Address"
                           value={walletAddress}
-                          onChange={(event) =>{
+                          onChange={(event) => {
                             newArray[index].address = event.target.value
                             calculateTotalCost()
                           }}
@@ -236,9 +241,9 @@ const handleChange = (event, index, field) => {
                         <input
                           className="text-zinc-400 text-xl font-medium font-Satoshi leading-[27.10px]"
                           placeholder="Cover Amount (ETH)"
-                          onChange={(event) =>{
-                              handleChange(event,index,'amount')
-                            }}
+                          onChange={(event) => {
+                            handleChange(event, index, 'amount')
+                          }}
                         />
                       </div>
                     </div>
@@ -246,10 +251,9 @@ const handleChange = (event, index, field) => {
                       <div className="px-[13px] py-[5.75px] rounded-[5px] justify-start items-start gap-2.5 flex">
                         <input
                           className="text-zinc-400 text-xl font-medium font-Satoshi leading-[27.10px]"
-                          onChange={(event) =>
-                            {
-                              handleChange(event,index,'days')
-                            }
+                          onChange={(event) => {
+                            handleChange(event, index, 'days')
+                          }
                           }
                         />
                       </div>
@@ -311,15 +315,15 @@ const handleChange = (event, index, field) => {
                     Referral Code
                   </div>
                   <div className="px-[13px] py-[5.75px] rounded-[5px] justify-start items-start gap-2.5 flex">
-                        <input
-                          className="text-zinc-400 text-xl font-medium font-Satoshi leading-[27.10px]"
-                          placeholder="Enter Referral Code"
-                          // value={walletAddress}
-                          // onChange={(event) =>
-                          //   (newArray[index].address = event.target.value)
-                          // }
-                        />
-                      </div>
+                    <input
+                      className="text-zinc-400 text-xl font-medium font-Satoshi leading-[27.10px]"
+                      placeholder="Enter Referral Code"
+                    // value={walletAddress}
+                    // onChange={(event) =>
+                    //   (newArray[index].address = event.target.value)
+                    // }
+                    />
+                  </div>
                 </div>
               </div>
               <div className="h-[150px] flex-col justify-between items-start inline-flex">
@@ -338,11 +342,11 @@ const handleChange = (event, index, field) => {
                   </div>
                 </div>
                 <div className="justify-start items-start gap-2.5 inline-flex">
-                  
+
                   <input className="w-[19px] h-[19px] bg-zinc-300 bg-opacity-0 rounded-[1px] border border-white"
-                   type="checkbox" id="checkbox1" onClick={(event)=>{
-                    setCheckbox(event.target.checked)
-                   }}></input>
+                    type="checkbox" id="checkbox1" onClick={(event) => {
+                      setCheckbox(event.target.checked)
+                    }}></input>
                   <div className="text-white text-sm font-normal font-Satoshi leading-tight">
                     I agree to the terms and conditions and understand the scope of the risk
                   </div>
@@ -351,9 +355,9 @@ const handleChange = (event, index, field) => {
             </div>
           </div>
           <div className="px-[35px] py-[15px] bg-gradient-to-r from-purple-600 to-cyan-400 rounded-[36px] cursor-pointer justify-start items-start gap-2.5 inline-flex"
-          onClick={()=>{
-            validate()
-          }}
+            onClick={() => {
+              validate()
+            }}
           >
             <div
               className="text-center text-white text-2xl font-bold font-Satoshi capitalize leading-tight "

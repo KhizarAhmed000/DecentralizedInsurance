@@ -69,13 +69,13 @@ export default function UserHome() {
     };
 
     fetch(`${backendUrl}user/getUser`, requestOptions)
-      .then((response) => response.json()) 
+      .then((response) => response.json())
       .then((data) => {
 
         const transactions = data.user.transactions;
         const walletAddress = data.user.walletAddress;
         console.log("test", walletAddress);
-        console.log(transactions); 
+        console.log(transactions);
         setData(transactions);
         console.log("dataaaaaaaaaaaaa", userdata[0]);
       })
@@ -127,7 +127,7 @@ export default function UserHome() {
       return cover ? cover.dailyCost : null;
     };
 
-    
+
     const userCover = await findCover(userdata[index].protocol);
     const dailyCost = getDailyCostByProtocol(userdata[index].protocol);
     setCancellationData({
@@ -144,7 +144,7 @@ export default function UserHome() {
     setmodalOpen(true);
     handleCancellationData(index)
   };
-  const calculateCancellationMoney = async ()=>{
+  const calculateCancellationMoney = async () => {
     return (cancellationData.amount * cancellationData.dailyCost * cancellationData.days) * 0.95
   }
 
@@ -174,7 +174,7 @@ export default function UserHome() {
     return new Date(timestampInt * 1000);
   };
 
-  const handleCancellation = async ()=>{
+  const handleCancellation = async () => {
     const cancellationMoney = (cancellationData.amount * cancellationData.dailyCost * cancellationData.days) * 0.95
   }
 
@@ -189,7 +189,11 @@ export default function UserHome() {
           </div>
           <div className="justify-start items-center gap-14 flex">
             <div className="justify-start items-start gap-[60px] flex">
-              <div className="w-[45px] h-7 justify-center items-center flex">
+              <div className="w-[45px] h-7 justify-center items-center flex cursor-pointer"
+                onClick={() => {
+                  navigate("/UserHome");
+                }}
+              >
                 <div className="w-[45px] text-center text-white text-[17px] font-normal font-Satoshi leading-7">
                   Home
                 </div>
@@ -209,26 +213,16 @@ export default function UserHome() {
                   </div>
                 </div>
               </div>
-              <div className="justify-center items-center flex">
-                <div
-                  className="text-center text-white text-lg font-normal font-Satoshi leading-7"
-                  onClick={() => {
-                    navigate("/ClaimAssessments");
-                  }}
-                >
+              <div className="justify-center items-center flex cursor-pointer"
+                onClick={() => {
+                  navigate("/ClaimAssessments");
+                }}
+              >
+                <div className="text-center text-white text-lg font-normal font-Satoshi leading-7">
                   Claims
                 </div>
               </div>
-              <div className="justify-center items-center flex">
-                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Community Claims
-                </div>
-              </div>
-              <div className="justify-center items-center flex">
-                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Data
-                </div>
-              </div>
+
             </div>
             <div className="px-[25px] py-3 bg-white rounded-[36px] justify-start items-center gap-2.5 flex">
               <div className="w-[14.75px] h-6 relative"></div>
@@ -434,7 +428,7 @@ export default function UserHome() {
                     </div>
                   </div>
                   <div className="flex-col justify-start items-end gap-2.5 inline-flex">
-                    
+
                     <div className="text-white text-xl font-bold font-Satoshi leading-tight"></div>
                   </div>
                 </div>
@@ -469,7 +463,7 @@ export default function UserHome() {
           <div className="flex ">
             <div className=" mr-2 px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex cursor-pointer">
               <div className="text-center text-black text-xl font-bold font-Satoshi capitalize leading-tight"
-              onClick={handleCancellation}
+                onClick={handleCancellation}
               >
                 Confirm
               </div>
