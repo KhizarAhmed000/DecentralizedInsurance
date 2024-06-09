@@ -65,7 +65,8 @@ export default function AdminCovers() {
   return (
     <>
       <div className="w-full h-auto shadow flex-col justify-start items-center gap-[150px] inline-flex bg-[#242324] background">
-        <div className="w-full py-[15px]  bg-opacity-60 justify-center items-center gap-[350px] inline-flex ">
+
+        <div className="w-full py-[15px] bg-black bg-opacity-60 justify-center items-center gap-[350px] inline-flex">
           <div className="w-[200px] h-[46px] pt-[0.50px] pb-[0.83px] justify-center items-center flex">
             <div className="w-[200px] h-[44.67px] relative flex-col justify-start items-start flex">
               <div className="w-[200.06px] h-[44.73px] relative"></div>
@@ -73,36 +74,32 @@ export default function AdminCovers() {
           </div>
           <div className="justify-start items-center gap-14 flex">
             <div className="justify-start items-start gap-[60px] flex">
-              <div className="w-[45px] h-7 justify-center items-center flex">
-                <div className="w-[45px] text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Home
-                </div>
-              </div>
+
               <div className="justify-center items-center flex">
                 <div className="self-stretch justify-start items-center inline-flex">
-                  <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                    Covers
+                  <div
+                    className="text-center text-white text-[17px] font-normal font-Satoshi leading-7"
+                    onClick={() => {
+                      navigate("/AdminCovers");
+                    }}
+                  >
+                    Home
                   </div>
                   <div className="w-6 h-6 relative">
                     <div className="w-6 h-6 left-0 top-0 absolute"></div>
                   </div>
                 </div>
               </div>
-              <div className="justify-center items-center flex">
+              <div className="justify-center items-center flex cursor-pointer"
+                onClick={() => {
+                  navigate("/AdminClaims");
+                }}
+              >
                 <div className="text-center text-white text-lg font-normal font-Satoshi leading-7">
-                  About
+                  Claims
                 </div>
               </div>
-              <div className="justify-center items-center flex">
-                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Community Claims
-                </div>
-              </div>
-              <div className="justify-center items-center flex">
-                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Data
-                </div>
-              </div>
+
             </div>
             <div className="h-11 px-[25px] py-3 bg-gradient-to-r bg-white rounded-[36px] justify-center items-center gap-2.5 flex cursor-pointer">
               <div className="text-center text-black text-[15px] font-bold font-Satoshi capitalize leading-tight cursor-pointer">
@@ -111,6 +108,9 @@ export default function AdminCovers() {
             </div>
           </div>
         </div>
+
+
+
 
         <div className="w-[1295px]  flex-col justify-start items-start gap-[75px] inline-flex">
           <div className="text-center text-white text-5xl font-bold font-Satoshi">
@@ -154,15 +154,13 @@ export default function AdminCovers() {
               {Object.entries(coverTypes).map(([type, value]) => (
                 <div
                   key={type}
-                  className={`px-5 py-2.5 rounded-[10px] justify-start items-center gap-[23px] flex cursor-pointer ${
-                    value ? "bg-teal-600" : "bg-white bg-opacity-20"
-                  }`}
+                  className={`px-5 py-2.5 rounded-[10px] justify-start items-center gap-[23px] flex cursor-pointer ${value ? "bg-teal-600" : "bg-white bg-opacity-20"
+                    }`}
                   onClick={() => handleCoverClick(type)}
                 >
                   <div
-                    className={`text-${
-                      value ? "black" : "gray-200"
-                    } text-xl font-medium font-Satoshi leading-[27.10px]`}
+                    className={`text-${value ? "black" : "gray-200"
+                      } text-xl font-medium font-Satoshi leading-[27.10px]`}
                   >
                     {type}
                   </div>
@@ -177,12 +175,11 @@ export default function AdminCovers() {
                 <>
                   <div
                     key={index}
-                    className={`h-[375px] w-[350px] pl-[35px] pr-[34.67px] py-[35px] bg-zinc-800 bg-opacity-30 rounded-[15px] border-2 border-purple-600 backdrop-blur-[25px] justify-center items-center flex ${
-                      selectedCover !== "All Risk Types" &&
+                    className={`h-[375px] w-[350px] pl-[35px] pr-[34.67px] py-[35px] bg-zinc-800 bg-opacity-30 rounded-[15px] border-2 border-purple-600 backdrop-blur-[25px] justify-center items-center flex ${selectedCover !== "All Risk Types" &&
                       selectedCover !== item.coverType
-                        ? "hidden"
-                        : ""
-                    }`}
+                      ? "hidden"
+                      : ""
+                      }`}
                   >
                     <div className="grow shrink basis-0 self-stretch flex-col justify-start items-end gap-[30px] inline-flex">
                       <div className="self-stretch h-[49px] justify-start items-start gap-2.5 inline-flex">

@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import backendUrl from "../../services/backendurl";
 import Modal from "react-modal";
 import Cover from "../../store/Cover";
-export default function ClaimAssessments() {
+export default function AdminClaims() {
   const walletAddress = useSelector(selectWalletAddress);
   // console.log("dasda  ", walletAddress);
   const navigate = useNavigate();
@@ -48,47 +48,19 @@ export default function ClaimAssessments() {
     },
   };
 
-  const handleConfirm = ()=>{
+  const handleConfirm = () => {
 
-//SMART CONTRACT SHIT HERE
+    //SMART CONTRACT SHIT HERE
 
-    setmodalOpen(false)
-    claims[claimedIndex].claimStatus = "Claimed"
+
   }
 
   useEffect(() => {
-      handleGetClaims(); 
+    handleGetClaims();
   }, []);
 
-  const handleGetClaims = ()=>{
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
+  const handleGetClaims = async () => {
 
-    var raw = JSON.stringify({
-      walletAddress: walletAddress,
-    });
-
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
-
-    fetch(`${backendUrl}user/getUser`, requestOptions)
-      .then((response) => response.json()) // Parse the response as JSON
-      .then((data) => {
-        // console.log(data); // Log the full data
-
-        // Access the transactions array
-        const transactions = data.user.transactions;
-        const walletAddress = data.user.walletAddress;
-        console.log('test', walletAddress)
-        console.log(transactions); // Log the transactions
-        setData(transactions)
-        console.log('dataaaaaaaaaaaaa', userdata[0]);
-      })
-      .catch((error) => console.log("error", error));
 
     const fetchData = async () => {
       try {
@@ -101,6 +73,7 @@ export default function ClaimAssessments() {
 
         const result = await response.json();
         setClaims(result);
+
       } catch (error) {
         console.error("Error fetching claims:", error);
       }
@@ -109,32 +82,36 @@ export default function ClaimAssessments() {
     fetchData();
   }
 
-  const deleteClaim = (index) => {
+  const handleChange = (value, index) => {
+    claims[index].claimStatus = value
 
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
     const raw = JSON.stringify({
       protocol: claims[index].protocol,
-      ownerAddress:walletAddress
+      ownerAddress: walletAddress,
+      newStatus: claims[index].claimStatus
     });
-    console.log(raw)
 
     const requestOptions = {
-      method: "DELETE",
+      method: "PUT",
       headers: myHeaders,
       body: raw,
       redirect: "follow"
     };
 
-    fetch(`${backendUrl}claim/deleteClaim`, requestOptions)
+    fetch(`${backendUrl}claim/updateClaimStatus`, requestOptions)
       .then((response) => response.text())
       .then((result) => {
         console.log(result)
         handleGetClaims();
       })
       .catch((error) => console.error(error));
-  }
+
+      
+  };
+
 
 
 
@@ -149,24 +126,16 @@ export default function ClaimAssessments() {
           </div>
           <div className="justify-start items-center gap-14 flex">
             <div className="justify-start items-start gap-[60px] flex">
-              <div className="w-[45px] h-7 justify-center items-center flex cursor-pointer"
-              onClick={() => {
-                navigate("/UserHome");
-              }}
-              >
-                <div className="w-[45px] text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Home
-                </div>
-              </div>
+             
               <div className="justify-center items-center flex">
                 <div className="self-stretch justify-start items-center inline-flex">
                   <div
                     className="text-center text-white text-[17px] font-normal font-Satoshi leading-7"
                     onClick={() => {
-                      navigate("/BuyCovers");
+                      navigate("/AdminCovers");
                     }}
                   >
-                    Covers
+                    Home
                   </div>
                   <div className="w-6 h-6 relative">
                     <div className="w-6 h-6 left-0 top-0 absolute"></div>
@@ -174,15 +143,15 @@ export default function ClaimAssessments() {
                 </div>
               </div>
               <div className="justify-center items-center flex cursor-pointer"
-              onClick={() => {
-                navigate("/ClaimAssessments");
-              }}
+                onClick={() => {
+                  navigate("/AdminClaims");
+                }}
               >
                 <div className="text-center text-white text-lg font-normal font-Satoshi leading-7">
                   Claims
                 </div>
               </div>
-             
+
             </div>
             <div className="px-[25px] py-3 bg-white rounded-[36px] justify-start items-center gap-2.5 flex">
               <div className="w-[14.75px] h-6 relative"></div>
@@ -196,7 +165,7 @@ export default function ClaimAssessments() {
           <div className="flex-col justify-start items-center gap-[35px] flex">
             <div className="h-[232px] flex-col justify-start items-start gap-[35px] flex">
               <div className="text-center text-white text-5xl font-bold font-Satoshi">
-                Your Claims
+                Claim Management
               </div>
 
               <div className="self-stretch h-[132px] justify-start items-start gap-5 inline-flex">
@@ -225,27 +194,29 @@ export default function ClaimAssessments() {
           </div>
           <div className="flex-col justify-start items-center gap-[35px] flex">
             <div className="self-stretch px-[3px] justify-center items-center gap-[61px] inline-flex">
-              <div className="w-[118.22px] text-center text-white text-2xl font-bold font-Satoshi">
+              <div className="w-[118.22px] text-center text-white text-2xl font-bold font-Satoshi" >
                 Protocol
               </div>
               <div className="text-center text-white text-2xl font-bold font-Satoshi">
                 {" "}
                 Cover Type
               </div>
-              <div className="text-center text-white text-2xl font-bold font-Satoshi">
+              <div className="text-center pl-[50px] text-white text-2xl font-bold font-Satoshi">
                 Claim Amount
               </div>
               <div className="text-center text-white text-2xl font-bold font-Satoshi">
                 Cover Period
               </div>
-              <div className="w-[153.05px] text-center text-white text-2xl font-bold font-Satoshi">
+              <div className="w-[200.05px] pl-[50px] text-center text-white text-2xl font-bold font-Satoshi">
                 Claim Status
               </div>
-              <div className="w-[159.39px] text-center text-white text-2xl font-bold font-Satoshi">
-                Actions
+              <div className="w-[190.05px] text-center text-white text-2xl font-bold font-Satoshi">
+                
               </div>
+                
             </div>
             {claims.map((item, index) => (
+              <>
               <div className="w-[1289px] h-[67px] relative bg-white bg-opacity-10 rounded-[15px] border border-white border-opacity-25">
                 <div key={index}>
                   <div className="left-[45px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
@@ -258,46 +229,44 @@ export default function ClaimAssessments() {
 
                   </div>
                   <div className="left-[546px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
-                       {item.lossAmount}
+                    {item.lossAmount}
                   </div>
                   <div className="left-[700px] top-[21px] absolute text-center text-white text-lg font-medium font-Satoshi">
                     {item.coverPeriod}
                   </div>
 
-                  <div className="w-[100px] px-[30px] py-[9px] left-[890px] top-[11px] absolute bg-gradient-to-r from-purple-600 to-cyan-400 rounded-xl justify-center items-center gap-2.5 inline-flex">
-                    <div className="text-center text-white text-lg font-bold font-Satoshi">
-                      {item.claimStatus}
-                    </div>
+                  <div className="w-[160px] px-[10px] py-[9px] left-[890px] top-[11px] absolute bg-gradient-to-r from-purple-600 to-cyan-400 rounded-xl justify-center items-center gap-2.5 inline-flex">
+                    <select
+                      value={item.claimStatus}
+                      onChange={(event) => {
+                        handleChange(event.target.value, index)
+                      }}
+                      className="text-center text-white text-lg font-bold font-Satoshi bg-transparent outline-none cursor-pointer"
+                      >
+                      <option value="Denied" className="text-black bg-white">Denied</option>
+                      <option value="Approved" className="text-black bg-white">Approved</option>
+                      <option value="Claimed" className="text-black bg-white">Claimed</option>
+                    </select>
                   </div>
-                  {item.claimStatus === "Approved" ? 
-                <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
-                <div className="w-[30px] h-[30px] relative cursor-pointer"><img src={images.arrow} 
-                onClick={()=>{
-                    setclaimAmount(item.lossAmount)
-                    setmodalOpen(true)
-                    setclaimedIndex(index)
-                }}
-                /></div>
-
-              </div>
-                :
-
-                  <div className="left-[1136px] top-[19px] absolute justify-start items-start gap-2.5 inline-flex">
-                    <div className="w-[30px] h-[30px] relative cursor-pointer"><img src={images.trashcan} 
-                    onClick={()=>{
-                        deleteClaim(index)
-                    }}
-                    /></div>
-
-                  </div>
-                }
+                  
                 </div>
               </div>
+              <div className="w-[1289px] h-[67px] relative ">
+              <div className="w-[350px] flex-col justify-between items-start flex">
+                      
+                      <div className="flex-col justify-end items-start gap-0.5 flex">
+                        <div className="text-white text-2xl font-bold font-Satoshi leading-relaxed">
+                          Description
+                        </div>
+                        <div className="text-white text-base font-medium font-Satoshi leading-relaxed">
+                          {item.description}
+                        </div>
+                      </div>
+                    </div>
+            </div>  
+            </>
             ))}
           </div>
-          <div className="text-center text-white text-2xl font-bold font-Satoshi">
-                If Approved, please contact support to avail your funds, <br></br>a customer service representative will verify your identity to ensure security
-              </div>
 
 
         </div>
@@ -342,7 +311,7 @@ export default function ClaimAssessments() {
         </div>
       </div>
 
-      {/* <Modal style={customStyles} isOpen={modalOpen} ariaHideApp={false}>
+      <Modal style={customStyles} isOpen={modalOpen} ariaHideApp={false}>
         <div className="w-[694px] h-[300px] p-[25px] bg-neutral-800 rounded-[20px] flex-col justify-start items-center gap-[50px] inline-flex">
 
           <div className="self-stretch h-[284px] flex-col justify-start gap-[25px] flex">
@@ -350,7 +319,7 @@ export default function ClaimAssessments() {
               Claim Your Insurance
             </div>
             <div className="flex-col justify-start gap-[15px] flex">
-            
+
 
               <div className="self-stretch px-2.5 justify-between items-center inline-flex">
                 <div className="text-white text-lg font-normal font-Satoshi capitalize">
@@ -365,14 +334,14 @@ export default function ClaimAssessments() {
                   Enter Recieving Address
                 </div>
                 <div className="text-white text-xl font-bold font-Satoshi leading-tight p-2 bg-gray">
-                  <input placeholder="Wallet Address"/>
+                  <input placeholder="Wallet Address" />
                 </div>
               </div>
             </div>
           </div>
           <div className="flex ">
             <div className=" mr-2 px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex cursor-pointer"
-            onClick={handleConfirm}
+              onClick={handleConfirm}
             >
               <div className="text-center text-black text-xl font-bold font-Satoshi capitalize leading-tight"
               >
@@ -380,9 +349,9 @@ export default function ClaimAssessments() {
               </div>
             </div>
             <div className="px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex cursor-pointer"
-            onClick={()=>{
-              setmodalOpen(false)
-            }}
+              onClick={() => {
+                setmodalOpen(false)
+              }}
             >
               <div className="text-center text-black text-xl font-bold font-Satoshi capitalize leading-tight"
               >
@@ -391,7 +360,7 @@ export default function ClaimAssessments() {
             </div>
           </div>
         </div>
-      </Modal> */}
+      </Modal>
     </>
   );
 }
