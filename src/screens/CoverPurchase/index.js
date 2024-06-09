@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import backendUrl from "../../services/backendurl";
 
 export default function CoverPurchase() {
+  //WALLET ADDRESS
   const walletAddress = useSelector(selectWalletAddress);
   const cartCovers = useSelector(selectCartCovers);
   const [days, setDays] = useState();
@@ -39,13 +40,13 @@ export default function CoverPurchase() {
   };
   
   const [newArray, setNewArray] = useState(initializeArray);
-  
+
   const validate = () => {
     if (!checkbox) {
-        seterror('Please agree to the terms and conditions.');
-        return;
+      seterror('Please agree to the terms and conditions.');
+      return;
     }
-    
+
     for (const item of newArray) {
         if (item.days === null || item.amount === null) {
             seterror('Days and amount values must not be null.');
@@ -55,9 +56,9 @@ export default function CoverPurchase() {
     }
 
     // RUN FUNCTIONS HERE IN THE EVENT OF SUCCESSFUL USER INPUT
+    createUser();
     purchaseCover(); // Call purchaseCover here
     seterror('validated');
-    createUser();
   };
 
   const calculateTotalCost = () => {
@@ -108,6 +109,7 @@ export default function CoverPurchase() {
       .then((result) => {
         // NAVIGATING FROM HERE
         navigate('/UserHome');
+        console.log(result)
       })
       .catch((error) => console.log("error", error));
   };
@@ -133,7 +135,7 @@ export default function CoverPurchase() {
         from: accounts[0],
         value: weiAmount,
       });
-
+      // createUser()
       alert('Cover purchased successfully');
     } catch (error) {
       console.error('Error purchasing cover:', error);
@@ -152,7 +154,11 @@ export default function CoverPurchase() {
           </div>
           <div className="justify-start items-center gap-14 flex">
             <div className="justify-start items-start gap-[60px] flex">
-              <div className="w-[45px] h-7 justify-center items-center flex">
+              <div className="w-[45px] h-7 justify-center items-center flex cursor-pointer"
+              onClick={() => {
+                navigate("/UserHome");
+              }}
+              >
                 <div className="w-[45px] text-center text-white text-[17px] font-normal font-Satoshi leading-7">
                   Home
                 </div>
@@ -172,21 +178,16 @@ export default function CoverPurchase() {
                   </div>
                 </div>
               </div>
-              <div className="justify-center items-center flex">
+              <div className="justify-center items-center flex cursor-pointer"
+              onClick={() => {
+                navigate("/ClaimAssessments");
+              }}
+              >
                 <div className="text-center text-white text-lg font-normal font-Satoshi leading-7">
-                  About
+                  Claims
                 </div>
               </div>
-              <div className="justify-center items-center flex">
-                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Community Claims
-                </div>
-              </div>
-              <div className="justify-center items-center flex">
-                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Data
-                </div>
-              </div>
+             
             </div>
             <div className="px-[25px] py-3 bg-white rounded-[36px] justify-start items-center gap-2.5 flex">
               <div className="w-[14.75px] h-6 relative"></div>
@@ -243,6 +244,7 @@ export default function CoverPurchase() {
                           <div className="text-white text-sm font-normal font-Satoshi leading-tight">
                             {item.coverType}
                           </div>
+                          { }
                         </div>
                       </div>
                     </div>

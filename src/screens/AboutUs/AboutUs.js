@@ -1,8 +1,12 @@
 import React from 'react'
 import './AboutUs.css'
 import cybersec from "../../assets/images/cybersec.jpg"
+import { useNavigate } from "react-router-dom";
 
 export default function AboutUs() {
+
+  const navigate = useNavigate();
+
   return (
     <>
 
@@ -14,38 +18,25 @@ export default function AboutUs() {
               <div className="w-[200.06px] h-[44.73px] relative"></div>
             </div>
           </div>
-          <div className="justify-start items-center gap-14 flex">
-            <div className="justify-start items-start gap-[60px] flex">
+          <div className="justify-start items-center gap-10 flex">
+            <div className="justify-start items-start gap-[30px] flex">
               <div className="w-[45px] h-7 justify-center items-center flex">
-                <div className="cursor-pointer w-[45px] text-center text-white text-[17px] font-normal font-Satoshi leading-7">
+                <div className="cursor-pointer w-[10px] text-center text-white text-[17px] font-normal font-Satoshi leading-7"
+                
+                onClick={() => {
+                  navigate("/");
+                }}>
                   Home
                 </div>
               </div>
               <div className="justify-center items-center flex">
-                <div className="self-stretch justify-start items-center inline-flex">
-                  <div className="cursor-pointer text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                    Covers
-                  </div>
-                  <div className="w-6 h-6 relative">
-                    <div className="w-6 h-6 left-0 top-0 absolute"></div>
-                  </div>
-                </div>
               </div>
               <div className="justify-center items-center flex">
                 <div className="cursor-pointer text-center text-white text-lg font-normal font-Satoshi leading-7">
                   About
                 </div>
               </div>
-              <div className="justify-center items-center flex">
-                <div className="cursor-pointer text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Community Claims
-                </div>
-              </div>
-              <div className="justify-center items-center flex">
-                <div className="cursor-pointer text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Data
-                </div>
-              </div>
+             
             </div>
             <div className="h-11 px-[25px] py-3 bg-gradient-to-r bg-white rounded-[36px] justify-center items-center gap-2.5 flex cursor-pointer">
               <div

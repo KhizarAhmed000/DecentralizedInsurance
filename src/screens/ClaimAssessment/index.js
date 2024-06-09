@@ -15,7 +15,7 @@ export default function ClaimAssessments() {
   const [userdata, setData] = useState();
   const [claims, setClaims] = useState([''])
   const [claimAmount, setclaimAmount] = useState(0)
-  const [modalOpen, setmodalOpen] = useState(true)
+  const [modalOpen, setmodalOpen] = useState(false)
   const [claimedIndex, setclaimedIndex] = useState()
   const CoverData = [
     {
@@ -149,7 +149,11 @@ export default function ClaimAssessments() {
           </div>
           <div className="justify-start items-center gap-14 flex">
             <div className="justify-start items-start gap-[60px] flex">
-              <div className="w-[45px] h-7 justify-center items-center flex">
+              <div className="w-[45px] h-7 justify-center items-center flex cursor-pointer"
+              onClick={() => {
+                navigate("/UserHome");
+              }}
+              >
                 <div className="w-[45px] text-center text-white text-[17px] font-normal font-Satoshi leading-7">
                   Home
                 </div>
@@ -169,21 +173,16 @@ export default function ClaimAssessments() {
                   </div>
                 </div>
               </div>
-              <div className="justify-center items-center flex">
+              <div className="justify-center items-center flex cursor-pointer"
+              onClick={() => {
+                navigate("/ClaimAssessments");
+              }}
+              >
                 <div className="text-center text-white text-lg font-normal font-Satoshi leading-7">
                   Claims
                 </div>
               </div>
-              <div className="justify-center items-center flex">
-                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Community Claims
-                </div>
-              </div>
-              <div className="justify-center items-center flex">
-                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Data
-                </div>
-              </div>
+             
             </div>
             <div className="px-[25px] py-3 bg-white rounded-[36px] justify-start items-center gap-2.5 flex">
               <div className="w-[14.75px] h-6 relative"></div>

@@ -181,16 +181,7 @@ export default function Home() {
                   Home
                 </div>
               </div>
-              <div className="justify-center items-center flex">
-                <div className="self-stretch justify-start items-center inline-flex">
-                  <div className="cursor-pointer text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                    Covers
-                  </div>
-                  <div className="w-6 h-6 relative">
-                    <div className="w-6 h-6 left-0 top-0 absolute"></div>
-                  </div>
-                </div>
-              </div>
+
               <div className="justify-center items-center flex">
                 <div className="cursor-pointer text-center text-white text-lg font-normal font-Satoshi leading-7"
                 onClick={() => {
@@ -200,16 +191,8 @@ export default function Home() {
                   About
                 </div>
               </div>
-              <div className="justify-center items-center flex">
-                <div className="cursor-pointer text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Community Claims
-                </div>
-              </div>
-              <div className="justify-center items-center flex">
-                <div className="cursor-pointer text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Data
-                </div>
-              </div>
+              
+              
             </div>
             <div className="h-11 px-[25px] py-3 bg-gradient-to-r bg-white rounded-[36px] justify-center items-center gap-2.5 flex cursor-pointer">
               <div

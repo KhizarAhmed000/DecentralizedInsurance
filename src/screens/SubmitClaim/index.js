@@ -30,49 +30,49 @@ export default function SubmitClaim() {
 
     const handleCreateClaim = () => {
 
-        
 
-            const myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
 
-            const raw = JSON.stringify({
-                protocol: userCover.protocol,
-                coverType: userCover.coverType,
-                ownerAddress: walletAddress,
-                coverAmount: userdata.amount,
-                coverPeriod: userdata.days,
-                lossTime,
-                lossAmount: parseInt(lossAmount),
-                description,
-            });
-            console.log('this is body', raw)
-            const requestOptions = {
-                method: "POST",
-                headers: myHeaders,
-                body: raw,
-                redirect: "follow"
-            };
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
 
-            fetch(`${backendUrl}claim/createClaim`, requestOptions)
-                .then((response) => response.text())
-                .then((result) => {
-                        navigate("/ClaimAssessments");                    
-                })
-                .catch((error) => console.log(error));
-        
+        const raw = JSON.stringify({
+            protocol: userCover.protocol,
+            coverType: userCover.coverType,
+            ownerAddress: walletAddress,
+            coverAmount: userdata.amount,
+            coverPeriod: userdata.days,
+            lossTime,
+            lossAmount: parseInt(lossAmount),
+            description,
+        });
+        console.log('this is body', raw)
+        const requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow"
+        };
+
+        fetch(`${backendUrl}claim/createClaim`, requestOptions)
+            .then((response) => response.text())
+            .then((result) => {
+                navigate("/ClaimAssessments");
+            })
+            .catch((error) => console.log(error));
+
     }
 
     const validateFields = () => {
 
-        if (description===null) {
+        if (description === null) {
             seterror('Description is required.');
             return false
         }
-        if (lossAmount===null) {
+        if (lossAmount === null) {
             seterror('Loss amount is required.');
             return false
         }
-        if (lossTime===null) {
+        if (lossTime === null) {
             seterror('Loss time is required.');
             return false
         }
@@ -93,7 +93,11 @@ export default function SubmitClaim() {
                     </div>
                     <div className="justify-start items-center gap-14 flex">
                         <div className="justify-start items-start gap-[60px] flex">
-                            <div className="w-[45px] h-7 justify-center items-center flex">
+                            <div className="w-[45px] h-7 justify-center items-center flex cursor-pointer"
+                                onClick={() => {
+                                    navigate("/UserHome");
+                                }}
+                            >
                                 <div className="w-[45px] text-center text-white text-[17px] font-normal font-Satoshi leading-7">
                                     Home
                                 </div>
@@ -113,21 +117,16 @@ export default function SubmitClaim() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="justify-center items-center flex">
+                            <div className="justify-center items-center flex cursor-pointer"
+                                onClick={() => {
+                                    navigate("/ClaimAssessments");
+                                }}
+                            >
                                 <div className="text-center text-white text-lg font-normal font-Satoshi leading-7">
-                                    About
+                                    Claims
                                 </div>
                             </div>
-                            <div className="justify-center items-center flex">
-                                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                                    Community Claims
-                                </div>
-                            </div>
-                            <div className="justify-center items-center flex">
-                                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                                    Data
-                                </div>
-                            </div>
+
                         </div>
                         <div className="px-[25px] py-3 bg-white rounded-[36px] justify-start items-center gap-2.5 flex">
                             <div className="w-[14.75px] h-6 relative"></div>
@@ -215,11 +214,11 @@ export default function SubmitClaim() {
                             <div className="grow shrink basis-0 text-white text-base font-normal font-Satoshi lowercase">Please send confidential information and supporting documents of proof of loss<br />to claims@dInsurance.com</div>
 
 
-                            
+
                         </div>
                         {error !== "validated" &&
-                                <div className="grow shrink basis-0 text-red-500 text-base font-normal font-Satoshi lowercase">{error}</div>
-                            }
+                            <div className="grow shrink basis-0 text-red-500 text-base font-normal font-Satoshi lowercase">{error}</div>
+                        }
                         <div className=" cursor-pointer px-[35px] py-[15px] bg-teal-600 rounded-[36px] justify-start items-start gap-2.5 inline-flex"
                             onClick={validateFields}
                         >

@@ -96,13 +96,21 @@ export default function BuyCovers() {
           </div>
           <div className="justify-start items-center gap-14 flex">
             <div className="justify-start items-start gap-[60px] flex">
-              <div className="w-[45px] h-7 justify-center items-center flex">
+              <div className="cursor-pointer w-[45px] h-7 justify-center items-center flex"
+              onClick={() => {
+                navigate("/UserHome");
+              }}
+              >
                 <div className="w-[45px] text-center text-white text-[17px] font-normal font-Satoshi leading-7">
                   Home
                 </div>
               </div>
               <div className="justify-center items-center flex">
-                <div className="self-stretch justify-start items-center inline-flex">
+                <div className="cursor-pointer self-stretch justify-start items-center inline-flex"
+                onClick={() => {
+                  navigate("/BuyCovers");
+                }}
+                >
                   <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
                     Covers
                   </div>
@@ -111,21 +119,17 @@ export default function BuyCovers() {
                   </div>
                 </div>
               </div>
-              <div className="justify-center items-center flex">
+              <div className="cursor-pointer justify-center items-center flex"
+              onClick={() => {
+                navigate("/ClaimAssessments");
+              }}
+              >
                 <div className="text-center text-white text-lg font-normal font-Satoshi leading-7">
-                  About
+                  Claims
                 </div>
               </div>
-              <div className="justify-center items-center flex">
-                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Community Claims
-                </div>
-              </div>
-              <div className="justify-center items-center flex">
-                <div className="text-center text-white text-[17px] font-normal font-Satoshi leading-7">
-                  Data
-                </div>
-              </div>
+              
+             
             </div>
             <div className="h-11 px-[25px] py-3 bg-gradient-to-r bg-white rounded-[36px] justify-center items-center gap-2.5 flex cursor-pointer">
               <div className="text-center text-black text-[15px] font-bold font-Satoshi capitalize leading-tight cursor-pointer">
