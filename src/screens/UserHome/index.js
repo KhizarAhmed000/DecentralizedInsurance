@@ -7,21 +7,22 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-modal";
 import backendUrl from "../../services/backendurl";
-import { Indexed, hexlify } from "ethers";
+import web3 from "../../web3";
+import insuranceContract from "../../insurance";
+
 export default function UserHome() {
   const walletAddress = useSelector(selectWalletAddress);
-  // console.log("dasda  ", walletAddress);
   const navigate = useNavigate();
   const [userdata, setData] = useState([]);
   const [covers, setCovers] = useState();
   const [modalOpen, setmodalOpen] = useState(false);
-  const [cancellationIndex, setcancellationIndex] = useState(0);
   const [cancellationData, setCancellationData] = useState({
     protocol: '',
     imageURL: '',
     coverType: '',
     amount: 0,
   });
+
   const CoverData = [
     {
       title: "Active Cover Amount",
@@ -71,13 +72,9 @@ export default function UserHome() {
     fetch(`${backendUrl}user/getUser`, requestOptions)
       .then((response) => response.json()) 
       .then((data) => {
-
         const transactions = data.user.transactions;
         const walletAddress = data.user.walletAddress;
-        console.log("test", walletAddress);
-        console.log(transactions); 
         setData(transactions);
-        console.log("dataaaaaaaaaaaaa", userdata[0]);
       })
       .catch((error) => console.log("error", error));
 
@@ -98,10 +95,8 @@ export default function UserHome() {
     fetchData();
   }, []);
 
-
   const onClaim = async (i, item) => {
     const userCover = await findCover(userdata[i].protocol);
-    console.log("testtt", userCover);
     navigate("/SubmitClaim", {
       state: {
         userdata: item,
@@ -110,24 +105,22 @@ export default function UserHome() {
       },
     });
   };
+
   const findCover = async (protocol) => {
     for (const item of covers) {
-
-      if (item.protocol == protocol) {
+      if (item.protocol === protocol) {
         return item;
       }
     }
-
     return false;
   };
+
   const handleCancellationData = async (index) => {
-    console.log(covers);
     const getDailyCostByProtocol = (protocol) => {
       const cover = covers.find(item => item.protocol === protocol);
       return cover ? cover.dailyCost : null;
     };
 
-    
     const userCover = await findCover(userdata[index].protocol);
     const dailyCost = getDailyCostByProtocol(userdata[index].protocol);
     setCancellationData({
@@ -137,17 +130,30 @@ export default function UserHome() {
       amount: userdata[index].amount,
       dailyCost,
       days: userdata[index].days,
-    })
-    console.log(cancellationData)
-  }
+    });
+  };
+
   const handleModal = async (index) => {
     setmodalOpen(true);
-    handleCancellationData(index)
+    handleCancellationData(index);
   };
-  const calculateCancellationMoney = async ()=>{
-    return (cancellationData.amount * cancellationData.dailyCost * cancellationData.days) * 0.95
-  }
 
+  const handleCancellation = async () => {
+    try {
+      const accounts = await web3.eth.getAccounts();
+      await insuranceContract.methods.cancelCover().send({
+        from: accounts[0],
+      });
+
+      // alert("Cover cancelled successfully");
+      setmodalOpen(false);
+
+      //WRITE CODE HERE
+    } catch (error) {
+      console.error("Error cancelling cover:", error);
+      // alert(`Failed to cancel cover: ${error.message}`);
+    }
+  };
 
   const getCoverRemainingTime = (index) => {
     const objectId = userdata[index]._id;
@@ -163,7 +169,6 @@ export default function UserHome() {
     const diffInMilliseconds = currentDate - timestamp;
     const diffInDays = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24));
     const remainingDays = Math.max(days - diffInDays, 0);
-    // console.log(remainingDays);
 
     return remainingDays;
   };
@@ -173,10 +178,6 @@ export default function UserHome() {
     const timestampInt = parseInt(timestampHex, 16);
     return new Date(timestampInt * 1000);
   };
-
-  const handleCancellation = async ()=>{
-    const cancellationMoney = (cancellationData.amount * cancellationData.dailyCost * cancellationData.days) * 0.95
-  }
 
   return (
     <>

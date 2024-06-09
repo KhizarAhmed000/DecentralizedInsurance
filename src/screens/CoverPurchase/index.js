@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import styles from "../../../src/App.css";
 import { useParams } from "react-router-dom";
 import images from "../../services/utilities/images";
+import web3 from '../../web3';
+import insuranceContract from '../../insurance';
 import {
   selectCartCovers,
   selectWalletAddress,
@@ -15,14 +17,17 @@ export default function CoverPurchase() {
   const cartCovers = useSelector(selectCartCovers);
   const [days, setDays] = useState();
   const [walletBalance, setWalletBalance] = useState();
-  const [checkbox,setCheckbox] = useState();
-  const [error, seterror] = useState("validated")
-  const [totalCost,settotalCost] = useState(0)
-  console.log(cartCovers);
-  console.log("dasda  ", walletAddress);
+  const [checkbox, setCheckbox] = useState();
+  const [error, seterror] = useState("validated");
+  const [totalCost, settotalCost] = useState(0);
+  const [amount, setAmount] = useState(''); // Define amount state
+  const [period, setPeriod] = useState(''); // Define period state
   const navigate = useNavigate();
 
-  // this is creating an array with the data for the transaction seeing how many covers there r in the cart
+  console.log(cartCovers);
+  console.log("dasda  ", walletAddress);
+
+  // this is creating an array with the data for the transaction seeing how many covers there are in the cart
   const initializeArray = () => {
     return cartCovers.map((item) => ({
       protocol: item.protocol,
@@ -32,6 +37,7 @@ export default function CoverPurchase() {
       dailyCost: item.dailyCost,
     }));
   };
+  
   const [newArray, setNewArray] = useState(initializeArray);
   
   const validate = () => {
@@ -43,41 +49,43 @@ export default function CoverPurchase() {
     for (const item of newArray) {
         if (item.days === null || item.amount === null) {
             seterror('Days and amount values must not be null.');
-            console.log(item.days,item.amount)
+            console.log(item.days, item.amount);
             return;
         }
     }
-//RUN FUNCTIONS HERE IN THE EVENT OF SUCCESSFUL USER INPUT
+
+    // RUN FUNCTIONS HERE IN THE EVENT OF SUCCESSFUL USER INPUT
+    purchaseCover(); // Call purchaseCover here
     seterror('validated');
-    createUser()
-};
+    createUser();
+  };
 
-const calculateTotalCost = () => {
-  let totalCost = 0;
+  const calculateTotalCost = () => {
+    let totalCost = 0;
 
-  // Check if any item in cartCovers has null values for days or amount
-  const hasNullValues = newArray.some((item) => item.days == null || item.amount == null);
-  if (hasNullValues) {
+    // Check if any item in cartCovers has null values for days or amount
+    const hasNullValues = newArray.some((item) => item.days == null || item.amount == null);
+    if (hasNullValues) {
       return totalCost; // Return 0 if any item has null values
-  }
+    }
 
-  // Calculate total cost if all items have valid days and amount
-  newArray.forEach((item) => {
+    // Calculate total cost if all items have valid days and amount
+    newArray.forEach((item) => {
       const itemCost = item.dailyCost * item.days * item.amount;
-      console.log(itemCost)
+      console.log(itemCost);
       totalCost += itemCost;
-  });
-  console.log(totalCost)
-  settotalCost(totalCost)
-};
+    });
+    console.log(totalCost);
+    settotalCost(totalCost);
+  };
 
-const handleChange = (event, index, field) => {
-  const value = event.target.value;
-  const updatedArray = [...newArray];
-  updatedArray[index][field] = value;
-  setNewArray(updatedArray);
-  calculateTotalCost();
-};
+  const handleChange = (event, index, field) => {
+    const value = event.target.value;
+    const updatedArray = [...newArray];
+    updatedArray[index][field] = value;
+    setNewArray(updatedArray);
+    calculateTotalCost();
+  };
 
   const createUser = () => {
     var myHeaders = new Headers();
@@ -85,7 +93,7 @@ const handleChange = (event, index, field) => {
 
     var raw = JSON.stringify({
       walletAddress: walletAddress,
-      transactions: newArray
+      transactions: newArray,
     });
 
     var requestOptions = {
@@ -98,15 +106,44 @@ const handleChange = (event, index, field) => {
     fetch(`${backendUrl}user/createUser`, requestOptions)
       .then((response) => response.text())
       .then((result) => {
-        //NAVIGATING FROM HERE
-        navigate('/UserHome')
+        // NAVIGATING FROM HERE
+        navigate('/UserHome');
       })
       .catch((error) => console.log("error", error));
   };
 
+  const purchaseCover = async () => {
+    try {
+      const accounts = await web3.eth.getAccounts();
+      const weiAmount = web3.utils.toWei(amount, 'ether');
+      const periodNumber = parseInt(period, 10);
+
+      if (isNaN(periodNumber) || periodNumber <= 0) {
+        throw new Error('Invalid period value. Please enter a valid number.');
+      }
+
+      console.log("Purchasing cover with values:", {
+        amount,
+        period: periodNumber,
+        weiAmount,
+        account: accounts[0]
+      });
+
+      await insuranceContract.methods.purchaseCover(weiAmount, periodNumber).send({
+        from: accounts[0],
+        value: weiAmount,
+      });
+
+      alert('Cover purchased successfully');
+    } catch (error) {
+      console.error('Error purchasing cover:', error);
+      alert(`Failed to purchase cover: ${error.message}`);
+    }
+  };
+
   return (
     <>
-      <div className="w-full bg-[#242324]  shadow flex-col justify-start items-center gap-[150px] inline-flex background">
+      <div className="w-full bg-[#242324] shadow flex-col justify-start items-center gap-[150px] inline-flex background">
         <div className="w-full py-[15px] bg-black bg-opacity-60 justify-center items-center gap-[350px] inline-flex">
           <div className="w-[200px] h-[46px] pt-[0.50px] pb-[0.83px] justify-center items-center flex">
             <div className="w-[200px] h-[44.67px] relative flex-col justify-start items-start flex">
@@ -167,14 +204,6 @@ const handleChange = (event, index, field) => {
                 Cover Purchase
               </div>
             </div>
-            {/* <div className="w-[603px] h-14 px-5 bg-white bg-opacity-20 rounded-[15px] border border-black border-opacity-25 justify-start items-center gap-5 inline-flex">
-              <div className="w-6 h-6 relative">
-                <div className="w-[19px] h-[19px] left-[2px] top-[2px] absolute rounded-full border border-white" />
-              </div>
-              <div className="text-gray-200 text-xl font-medium font-Satoshi leading-7 tracking-tight">
-                Add more products
-              </div>
-            </div> */}
           </div>
           <div className="flex-col justify-start items-start gap-[35px] flex">
             <div className="self-stretch px-[39px] justify-center items-start gap-[133px] inline-flex">
@@ -214,7 +243,6 @@ const handleChange = (event, index, field) => {
                           <div className="text-white text-sm font-normal font-Satoshi leading-tight">
                             {item.coverType}
                           </div>
-                          {}
                         </div>
                       </div>
                     </div>
@@ -224,9 +252,9 @@ const handleChange = (event, index, field) => {
                           className="text-zinc-400 text-xl font-medium font-Satoshi leading-[27.10px]"
                           placeholder="Enter Address"
                           value={walletAddress}
-                          onChange={(event) =>{
-                            newArray[index].address = event.target.value
-                            calculateTotalCost()
+                          onChange={(event) => {
+                            newArray[index].address = event.target.value;
+                            calculateTotalCost();
                           }}
                         />
                       </div>
@@ -236,9 +264,9 @@ const handleChange = (event, index, field) => {
                         <input
                           className="text-zinc-400 text-xl font-medium font-Satoshi leading-[27.10px]"
                           placeholder="Cover Amount (ETH)"
-                          onChange={(event) =>{
-                              handleChange(event,index,'amount')
-                            }}
+                          onChange={(event) => {
+                            handleChange(event, index, 'amount');
+                          }}
                         />
                       </div>
                     </div>
@@ -246,11 +274,11 @@ const handleChange = (event, index, field) => {
                       <div className="px-[13px] py-[5.75px] rounded-[5px] justify-start items-start gap-2.5 flex">
                         <input
                           className="text-zinc-400 text-xl font-medium font-Satoshi leading-[27.10px]"
-                          onChange={(event) =>
-                            {
-                              handleChange(event,index,'days')
-                            }
-                          }
+                          placeholder="Period in seconds"
+                          onChange={(event) => {
+                            handleChange(event, index, 'days');
+                            setPeriod(event.target.value); // Ensure period is set correctly
+                          }}
                         />
                       </div>
                       <div className="px-[13px] py-[5.75px] bg-white bg-opacity-20 rounded-[10px] justify-start items-center gap-[23px] flex">
@@ -260,7 +288,7 @@ const handleChange = (event, index, field) => {
                       </div>
                     </div>
                     <div className="w-9 h-9 relative" />
-                    <div className="justify-end items-end  gap-14 inline-flex ml-[650px] mt-10">
+                    <div className="justify-end items-end gap-14 inline-flex ml-[650px] mt-10">
                       <div className="flex-col justify-end items-end gap-[5px] inline-flex">
                         <div className="w-[242px] justify-between items-center inline-flex">
                           <div className="text-white text-base font-normal font-Satoshi capitalize">
@@ -311,15 +339,11 @@ const handleChange = (event, index, field) => {
                     Referral Code
                   </div>
                   <div className="px-[13px] py-[5.75px] rounded-[5px] justify-start items-start gap-2.5 flex">
-                        <input
-                          className="text-zinc-400 text-xl font-medium font-Satoshi leading-[27.10px]"
-                          placeholder="Enter Referral Code"
-                          // value={walletAddress}
-                          // onChange={(event) =>
-                          //   (newArray[index].address = event.target.value)
-                          // }
-                        />
-                      </div>
+                    <input
+                      className="text-zinc-400 text-xl font-medium font-Satoshi leading-[27.10px]"
+                      placeholder="Enter Referral Code"
+                    />
+                  </div>
                 </div>
               </div>
               <div className="h-[150px] flex-col justify-between items-start inline-flex">
@@ -338,9 +362,8 @@ const handleChange = (event, index, field) => {
                   </div>
                 </div>
                 <div className="justify-start items-start gap-2.5 inline-flex">
-                  
                   <input className="w-[19px] h-[19px] bg-zinc-300 bg-opacity-0 rounded-[1px] border border-white"
-                   type="checkbox" id="checkbox1" onClick={(event)=>{
+                   type="checkbox" id="checkbox1" onClick={(event) => {
                     setCheckbox(event.target.checked)
                    }}></input>
                   <div className="text-white text-sm font-normal font-Satoshi leading-tight">
@@ -351,10 +374,9 @@ const handleChange = (event, index, field) => {
             </div>
           </div>
           <div className="px-[35px] py-[15px] bg-gradient-to-r from-purple-600 to-cyan-400 rounded-[36px] cursor-pointer justify-start items-start gap-2.5 inline-flex"
-          onClick={()=>{
+          onClick={() => {
             validate()
-          }}
-          >
+          }}>
             <div
               className="text-center text-white text-2xl font-bold font-Satoshi capitalize leading-tight "
             >
